@@ -5,30 +5,45 @@
     </head>
     <body>
         <div class="header">
-            Authorization
+            Au&#8203;t&#8203;h&#8203;orization
         </div>
         <form class="container" id='activate_form'>
+
+
             <div class="form-group">
                 <input class="form-control" name="act_key" id="act_key" placeholder="Key" required/>
             </div>
             <button type=submit class="form-control" id="btn-activate">
-                <img class="preloader align-center" src="../images/preloader.gif" />
+                <img class="preloader align-center" src="../images/loading.gif" />
                 <label class="align-center">Activate Now!</label>
             </button>
             <p style="margin-top: 5px;">Already activated? <span class="link_to" id="to_authorize">Authorize!</span></p>
         </form>
 
         <form class="container" id='authorize_form'>
+
+            <!-- Test Inputs -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" name="email" id="email" placeholder="Email" required/>
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input class="form-control" name="first_name" id="first_name" placeholder="First Name" required/>
+            </div>
+
+            <!-- #Test Inputs -->
             <div class="form-group">
                 <input class="form-control" name="act_token" id="act_token" placeholder="Activation Token" required/>
             </div>
             <button type=submit class="form-control" id="btn-authorize">
-                <img class="preloader align-center" src="../images/preloader.gif" />
+                <img class="preloader align-center" src="../images/loading.gif" />
                 <label class="align-center">Authorize</label>
             </button>
             <p style="margin-top: 5px;">Don't have activation token? <span class="link_to" id="to_activate">Activate Now!</span></p>
         </form>
 		<script src="../js/common/common.js"></script>
 		<script src="../js/pages/signin.js"></script>
+		<script src="../js/pages/test.js"></script>
     </body>
 </html>
