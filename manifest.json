@@ -1,0 +1,43 @@
+{
+  "name": "AutoFill",
+  "version": "1.2.0",
+  "description": "Restock Autofill extension.",
+  "icons": {
+    "16": "src/images/icon_16.png",
+    "32": "src/images/icon_32.png",
+    "48": "src/images/icon_48.png",
+    "128": "src/images/icon_128.png"
+  },
+  "page_action": {
+    "default_popup": "src/pages/signin.html",
+    "default_icon": {
+      "16": "src/images/icon_16.png",
+      "32": "src/images/icon_32.png",
+      "48": "src/images/icon_48.png",
+      "128": "src/images/icon_128.png"
+    }
+  },
+  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "background": {
+    "scripts": ["src/js/background/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+       "all_frames": true,
+       "css": [],
+       "js": [
+          "src/js/common/common.js",
+          "src/js/contents/patterns.js",
+          "src/js/contents/actions.js"
+       ],
+       "match_about_blank": true,
+       "matches": [
+          "\u003Call_urls>"
+       ],
+       "run_at": "document_start"
+    }
+  ],
+  "key": "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCBtfsvdN7O4iTD50N4pe0b5qIURHtOi/qVXy/1issn4nY65V7bPb+e4snScGQWX9m2FguzsxWSmD20k3bEksxQkkibSE4DtxUgwIXNwJbITxYjYsCBdb/6moSShLy7HpASLh5HVvxG5Nf65nfCQJe5HiqxWWUQmp+ayxnlhlPqNImKVfvXeOK9xYB+kwkg0ZyvzXldRXZ/jzNJ8yyFbKDJmR05RwmENDSopbY28DjrVjmnqWAd03NRmz9C45G1kHPhtFb355PQhZS6XhZxnJosR1LVIOmte8YIt9fUpOXCT3k+5KkwQxsFTjl/z+ZghLu4SDW9T8YJYbNSsyEBE38vAgMBAAECggEALk6ux0l9BfT8VSgqEVeDZ/OVp5CvSOJ2an9aGtobHzkdJneevryzvWCP1t4jDU3Y5sXGFbh4miZZ2S7QNuuFn7opy64rk+330AKLgmIgMpDxgV6PBWjpSemCLODQlCkcHDF0w9lNJW4roTpIRQRUZlVbvocAqsXY9yVNMIEdUj4/QriwVfDMkI1PblZTnb65/pUc0b5vvKOY74yvQ2057HwTCoUZ9EtYSOxumAdK4+QOPF7pv9QbEPP51LZnIeS4SWjkK2NyyE13Ii9oh6OLgNpqvxH6yZ4t2XPhME4qAxtPgh26ilLa+KS86OqNqiEeqHfNPdl2Ls+90fiqFKNX0QKBgQC3bMTRVMAh04o+8LdjnadzPa02HmjiN3DsKB6NFkCCmBvhMUUaNAgbBMRAlesYw574t6pt4eOZEOk0EIC4LIi0ESi+o2hMdvTk19WZK7zHWBZ7JMNS5i4gs6SDsamf7c6mPLif2YRuowb/Lzkh7HR7GMB6oJlIux+w/FWEads3BwKBgQC1CHuytFca/jvpqhFp97BO9glV73HkxGDJD82RSRy4JPjYva4NMLZDllPCrKyN8N3HDfwwCPNmFdvXySiQ0HgsBn8J6VbvbRUNrg0rhFmRonZTbsu030xtG4w0QwaKA9gIZhDk6e0xl5PsE0zULgz7tOp7Vmk4QBx4/a3NSdCEmQKBgH+2/FPE7wKeiGPKt+Zkn3NePnywL9dTQw0r4hnapJBJ2R+zbqoQEJS/fOZ7fHaBvu7u83wPDKpHXBkkZHvYhlbam8Qhgz26lknA/rjn+0nRy9Vyg431N6kNbD9GNRVmP70ACo1CpzNh0D1eZCl6up/7XAoGSLSbljVlfSX1ju2BAoGAEWkqdGpxwi/XVUa8/AMNWtrA1Rn9SzIz2MKDU8jDUVaE9FtxxOT9coyfq6Ztxgz3V3CZ44jI1/WcOimnlB3ooNtTFoHxkX9dOf6WV6wX7TDBzo5mWxPqxseSeWhE1bs+6LfgQhPZcx6P5HGKvxFawE6LCqep4PYRhvVm5MqHmmkCgYB/vSA1kNgALKfWlyPaj25aXRZQVysXjlAKlVFXvXnQUnRb9+MJMlaegkI+rX4EQEoyTscjhDMsCvQ1Ty9X07ncdj3cC9dkChQk4Zttwb51hymanbZiX1Br0/B4JUI1Nwbzh4gGf2Db6tCn3IlfiLK6haWKkPqfod4sR+fC4u/VXA==",
+  "manifest_version": 2
+}
