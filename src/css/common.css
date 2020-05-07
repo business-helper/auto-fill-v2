@@ -1,0 +1,139 @@
+:root {
+    --bg-body: #111727;
+    --bg-head: #1E2435;
+    --bg-button: #1E2435;
+    --bg-btn-hover: #272E42;
+    --bg-input: #272E42;
+    --fg-body: white;
+    --fg-label: #e6e6e6;
+    --fg-input: #9aa5cc;
+    --fg-button: #00E6F3;
+
+    --z-modal: 100;
+}
+
+body {
+    background: var(--bg-body);
+    color: var(--fg-body);
+    margin: 0;
+    padding: 0;
+}
+
+.preloader {
+    width: 16px;
+    height: 16px;
+    margin-right: 0px;
+    display: none;
+}
+
+.align-center {
+    vertical-align: middle;
+}
+
+.w-half { width: 50%; }
+.blur-1 { filter: blur(1px); }
+.blur-2 { filter: blur(2px); }
+.font-14 { font-size: 14px; }
+.hidden { display: none; }
+.items-center { align-items: center; }
+
+.header {
+    background: var(--bg-head);
+    font-size: 24px;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 400px;
+    padding: 20px 15px 30px 15px;
+    min-width: 300px;
+    margin: auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.flex {
+    display: flex;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--fg-label);
+}
+
+.form-control {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    outline: none;
+}
+
+.form-control.w-half {
+    width: calc(50% - 8px) !important;
+}
+
+.form-control.w-half:first-child {
+    margin-right: 7px;
+}
+
+.form-control.w-half:last-child {
+    margin-left: 7px;
+}
+
+.form-group.items-3 {
+    display: flex;
+}
+
+.form-group.items-3 input.form-control {
+    width: calc(33.33% - 5px);
+}
+
+.form-group.items-3 input.form-control:first-child {
+    margin-right: 7px;
+}
+
+.form-group.items-3 input.form-control:last-child {
+    margin-left: 7px;
+}
+
+input, select {
+    background: var(--bg-input);
+    color: var(--fg-input);
+}
+
+input:focus, select:focus {
+    outline: none;
+    box-shadow:  0 0 8px #656bb7d1;
+}
+
+option {
+    padding: 5px 0;
+    font-size: inherit;
+}
+
+button {
+    background: var(--bg-button);
+    color: var(--fg-button);
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: var(--bg-btn-hover);
+}
+
+button:focus {
+    outline: none;
+}
+

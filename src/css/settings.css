@@ -1,0 +1,98 @@
+:root {}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.tabs .tab {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+    padding-top: 7px;
+    transition: all .2s;
+    background-color: #1b2235;
+}
+
+.tabs .tab:hover {
+    color: #a9c7ec;
+}
+
+.tabs .tab.active {
+    border-bottom: 1px solid #404096;
+    font-weight: bold;
+    color: #a9c7ec;
+    background-color: #292d3a;
+}
+
+button.add {}
+
+button.save {
+    /* background-color: #71BBFF; */
+    color: #71BBFF;
+}
+
+/* Profiles Tab */
+#profile_setting button { margin-left: 5px; margin-right: 5px; }
+#profile_setting button:first-child { margin-right: 5px; }
+#profile_setting button:last-child { margin-left: 5px; }
+
+#btn-remove-profile { color: #FF4D6D; }
+#btn-new-profile { color: #2DFF81; }
+#im-ex-container { margin-bottom: 15px; float: right; }
+#im-ex-container button.btn { border: none; padding: 5px 15px; border-radius: 5px; }
+#im-ex-container button.btn.export { color: #FF4C6D; }
+#import-file { position: fixed; left: -100%; top: -100%; }
+/* Custom Tab */
+
+#custom-container { max-height: 600px; overflow: auto; padding-right: 7px; }
+
+#custom-container::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); border-radius: 10px; background-color: #1b1b42; }
+
+#custom-container::-webkit-scrollbar { width: 10px; border-radius: 10px; /* background-color: red; */ }
+
+#custom-container::-webkit-scrollbar-thumb { border-radius: 10px; -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3); background-color: #2b2b52; }
+
+#custom_keywords * { transition: all 0.3s; }
+
+#custom_keywords .custom-item input:first-child { margin-right: 5px; }
+
+#custom_keywords .custom-item input:last-child { margin-left: 5px; margin-right: 5px; }
+
+#custom_keywords .custom-item button { margin-left: 5px; border: none; border-radius: 5px; padding: 0px 13px; font-size: 20px; display: block; background-color: #3a3a5f; color: white; }
+
+#custom_keywords .custom-item:hover button { display: block; }
+
+#custom_keywords .custom-item button:hover { background-color: #4f4f79; color: #ddd; }
+
+.section-header { 
+    position: relative;
+    min-height: 60px;
+    margin-top: 20px;
+}
+
+.section-header .title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    transform: translate(-50%, calc(-50% - 3px));
+    background-color: var(--bg-body);
+    font-size: 16px;
+    z-index: 1;
+}
+
+.section-header .devider {
+    width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-bottom: 1px solid #29363c;
+}
