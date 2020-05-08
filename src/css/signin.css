@@ -8,7 +8,7 @@
     margin: auto;
 }
 #activate_form { display: none; }
-form{ min-height: 250px; }
+form{ min-height: 50px; }
 
 .link_to { font-weight: bold; cursor: pointer; transition: color 0.2s; }
 .link_to:hover { color: #cccccc; }

@@ -105,53 +105,51 @@
                 </div>
             </div>
         </form>
-        <!-- Configuration Content -->
-        <div class="container" id="configuration">
-            <div class="inner-wrapper">
-                <div class="section-header" style="margin-top: 0px;">
-                    <p class="title">Options</p>
-                    <div class="devider"></div>
-                </div>
-                <div class="items-center font-14" style="margin-bottom: 15px;">
-                    <input class="align-center" type="checkbox" id="auto-active" />
-                    <label class="align-center" for="auto-active">Active</label>
-                </div>
-                <div class="items-center font-14">
-                    <input class="align-center" type="checkbox" id="auto-checkout" />
-                    <label class="align-center" for="auto-checkout">Auto Checkout</label>
-                </div>
-                <div class="section-header">
-                    <p class="title">Activation</p>
-                    <div class="devider"></div>
-                </div>
-                <div class="form-group">
-                    <label>Activation Key</label>
-                    <input class="form-control" name="actv_key" id="actv_key" placeholder="Activation Key" readonly />
-                </div>
-                <div class="form-group">
-                    <label>Hardware ID</label>
-                    <input class="form-control" name="actv_hwid" id="actv_hwid" placeholder="Hardware ID" readonly />
-                </div>
-                <div class="form-group">
-                    <label>Device Name</label>
-                    <input class="form-control" name="actv_device" id="actv_device" placeholder="Device Name"
-                        readonly />
-                </div>
-                <div class="form-group">
-                    <label>Activation Token</label>
-                    <input class="form-control" name="actv_token" id="actv_token" placeholder="Activation Token"
-                        readonly />
-                </div>
-            </div>
-        </div>
         <!-- Custom Keywords Contents -->
         <div class="container tab-pane" id="custom_keywords">
             <div class="inner-wrapper">
+                <p class="section-title">Custom Autofill</p>
                 <div id="custom-container">
                 </div>
                 <div class="flex">
                     <button class="w-half form-control" id="add-custom">Add</button>
                     <button class="w-half form-control save" id="save-customs">Save</button>
+                </div>
+            </div>
+            <div class="inner-wrapper" style="margin-top: 20px;">
+                <div class="form-group auth-item">
+                    <label>Activation Token</label>
+                    <input class="form-control" name="actv_token" id="actv_token" placeholder="Activation Token" />
+                </div>
+                <div class="form-group auth-item">
+                    <label>License Key</label>
+                    <input class="form-control" name="actv_key" id="actv_key" placeholder="License Key" readonly />
+                </div>
+            </div>
+        </div>
+        <!-- Configuration Content -->
+        <div class="container" id="configuration">
+            <div class="inner-wrapper">
+                <p class="section-title">Custom Autoclick</p>
+                <div id="domain-container">
+                    <div class="one-domain">
+                        <div class="domain-wrapper">
+                            <input class="form-control" placeholder="Domain"/>
+                            <img class="click-icon plus" src="../images/plus.png" />
+                            <img class="click-icon trash" src="../images/trash.png" />
+                        </div>
+                        <div class="click-array">
+                            <div class="one-click">
+                                <input class="form-control" placeholder="Click"/>
+                                <img class="click-icon plus" src="../images/plus.png" />
+                                <img class="click-icon trash" src="../images/trash.png" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex">
+                    <button class="w-half form-control" id="add-custom-click">Add</button>
+                    <button class="w-half form-control save" id="save-custom-clicks">Save</button>
                 </div>
             </div>
         </div>

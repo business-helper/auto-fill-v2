@@ -7,7 +7,7 @@ const RST_PATTERNS = {
     first_name: new RegExp("first.*name|initials|fname|first$|given.*name", "i"),
     last_name: new RegExp("last.*name|lname|surname|last$|secondname|family.*name", "i"),
     full_name: new RegExp("^name|full.?name|your.?name|customer.?name|bill.?name|ship.?name" + "|name.*first.*last|firstandlastname", "i"),
-    // phone: new RegExp("phone|mobile|contact.?number|tel", "i"),
+    phone: new RegExp("phone|mobile|contact.?number|tel", "i"),
     address1: new RegExp("^address$|address[_-]?line(one)?|address1|addr1|street", "i"),
     address2: new RegExp("address[_-]?line(2|two)|address.?2|addr2|street.?(?:#|no|num|nr)|suite|unit", "i"),
     city: new RegExp("city|town", "i"),
@@ -20,7 +20,7 @@ const RST_PATTERNS = {
         "verification|card.?identification|security.?code|card.?code"
         + "|security.?value"
         + "|security.?number|card.?pin|c-v-v"
-        + "|(cvn|cvv|cvc|csc|cvd|cid|ccv)(field)?"
+        + "|(cvn|cvv|cvc|csc|cvd|cid|ccv|vval)(field)?"
         + "|\\bcid\\b", "i"),
     card_exp: new RegExp("expir|exp.*date|^expfield$", "i"),
     card_exp_mm: new RegExp("^\\s*MM\\s*$", "i"),
@@ -35,42 +35,66 @@ const RST_PATTERNS = {
 }
 
 docReady(function () {
-    setTimeout(function () {
-        scanEelements();
-    }, 500);    
+
+    document.addEventListener('scroll', function () {
+        setTimeout(function() {
+            try {
+                chrome.extension.sendMessage({type: 'requestData'}, function(result) {
+                    // console.log(result)
+                    if (result.data) {
+                        scanEelements(result.data);
+                        setTimeout(processCheckout, 10);
+                    }
+                });
+            } catch (e) { 
+
+            }
+        }, 400);
+    });
+    document.dispatchEvent(new CustomEvent('scroll'));
+    // setTimeout(function () {
+    //     // console.log(isDocumentLoadingComplete());
+    //     scanEelements();
+    //     setTimeout(function () {scanEelements();}, 1000);
+    // }, 1500);
 })
 
-function scanEelements() {
-    const result = {
-        profile: {
-            name: "Profile 1",
-            address1: "address1",
-            address2: "address2",
-            email: "email",
-            phone: "123",
-            first_name: "first name",
-            last_name: "last name",
-            city: "city",
-            country: "country",
-            state: "state",
-            zip_code: "115035",
-            card_number: "4242424242424242",
-            card_exp_mm: "10",
-            card_exp_y4: "2023",
-            card_cvv: "123",
-        },
-        customs: [
-            {key: 'activation Token', value: "TOKEN 1"},
-            {key: 'Discord Username', value: "Tai#0002"}
-        ],
-        settings: {
+function isDocumentLoadingComplete() {
+    return document.readyState === "interactive" || document.readyState === "complete";
+}
 
-        }
-    }
+function scanEelements(data) {
+    // const data = {
+    //     profile: {
+    //         name: "Profile 1",
+    //         address1: "address1",
+    //         address2: "address2",
+    //         email: "martinstevanovic000@gmail.com",
+    //         phone: "13123",
+    //         first_name: "first name",
+    //         last_name: "last name",
+    //         city: "city",
+    //         country: "country",
+    //         state: "state",
+    //         zip_code: "115035",
+    //         card_number: "4242424242424242",
+    //         card_exp_mm: "10",
+    //         card_exp_y4: "2023",
+    //         card_cvv: "123",
+    //     },
+    //     customs: [
+    //         { key: 'activation Token', value: "TOKEN 1" },
+    //         { key: 'Discord Username', value: "Tai#0002" }
+    //     ],
+    //     settings: {
+    //         autoFill: true,
+    //         autoCheckout: true,
+    //     }
+    // }
     // input
     let inputs = document.getElementsByTagName('input');
     for (let input of inputs) {
-        let instance = new AutoFillElement(input, result);
+        let instance = new AutoFillElement(input, data);
         instance.startAutoFill();
     }
     // textarea
@@ -93,8 +117,10 @@ class AutoFillElement {
     }
 
     startAutoFill = function () {
+        
         // check attribute
-        const marker = this.element.getAttribute(RST_MARKER); console.log(!!marker);
+        if (!this.element) return false;
+        const marker = this.element.getAttribute(RST_MARKER); //console.log(!!marker);
         if (!!marker && marker == RST_MARKER_END) { return false; } // already done
 
         this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
@@ -102,7 +128,6 @@ class AutoFillElement {
         if (autofilled === false) {
             this.checkCustomMatches();
         }
-
     }
 
     checkDefaultPattern = function () {
@@ -110,7 +135,10 @@ class AutoFillElement {
         for (let str of this.getComparableStrings()) {
             for (let key in RST_PATTERNS) {
                 if (!!str.match(RST_PATTERNS[key])) {
-                    console.log('[MATCH]', str, key, !!str.match(RST_PATTERNS[key]));
+                    // if (key == 'card_exp_mmyy') {
+                    //     console.log('[MATCH]', str, key, !!str.match(RST_PATTERNS[key]));
+                    //     console.log(this.getProfileValue(key));
+                    // }
                     return this.updateElementValue(this.getProfileValue(key));
                 }
             }
@@ -121,7 +149,7 @@ class AutoFillElement {
     checkCustomMatches = function () {
         for (let str of this.getComparableStrings()) {
             for (let custom of this.info.customs) {
-                if (this.matchKeyword(str, custom.key)) {
+                if (this.matchKeyword(str, custom.keyword)) {
                     console.log('[Custom match]', str, custom);
                     this.updateElementValue(custom.value);
                 }
@@ -160,36 +188,50 @@ class AutoFillElement {
         return filterElement.value;
     }
 
-    getProfileValue = function(key) {
+    getProfileValue = function (key) {
         switch (key) {
             case "address1": case "address2": case "email": case "first_name": case "last_name":
             case "city": case "state": case "country": case "zip_code": case "card_number":
-            case "card_exp_mm": case "card_exp_y4": case "card_cvv":
+            case "card_exp_mm": case "card_exp_y4": case "card_cvv": case "phone":
                 return this.info.profile[key];
             case "full_name":
                 return `${this.info.profile['first_name']} ${this.info.profile['last_name']}`;
             case "card_exp_month": return this.info.profile['card_exp_mm'];
-            case "card_exp_year": return this.info.profile['card_exp_y4']
+            case "card_exp_year": return this.info.profile['card_exp_y4'];
+            case "card_exp": case "card_exp_mmyy": return this.info.profile['card_exp_mm'] + '/' + this.info.profile['card_exp_y4'].slice(2, 4);
+            
             default:
                 return "";
         }
     }
 
-    matchKeyword = function(target, keyword) {
-        target = target.toLowerCase();
-        keyword = keyword.toLowerCase();
-        if (target) {
-            return target.includes(keyword);
+    matchKeyword = function (target, keyword) {
+        try {
+            target = target.toLowerCase();
+            keyword = keyword.toLowerCase();
+            if (target) {
+                return target.includes(keyword);
+            }
+            return false;
+        } catch (e) {
+            console.log('[keyword] error', keyword)
         }
-        return false;
+
     }
 
-    updateElementValue = function(val) {
-        console.log(val, this.element.tagName)
-        // this.element.focus();
-        this.element.value = val;
-        this.element.setAttribute(RST_MARKER, RST_MARKER_END);
-        return true;
+    updateElementValue = function (val) {
+        // console.log(val, this.element.tagName)
+        if (!!val) {
+            this.element.focus();
+            this.element.value = val;
+            this.element.blur();
+            if (this.element.value == val) {
+                this.element.setAttribute(RST_MARKER, RST_MARKER_END);
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }
 
@@ -201,4 +243,49 @@ function docReady(fn) {
     } else {
         document.addEventListener("DOMContentLoaded", fn);
     }
+}
+
+function processCheckout() {
+	if (!isDocumentLoadingComplete()) return false;
+	for (let button of document.querySelectorAll('button')) {
+		attemptCheckout(button);
+	}
+	for (let submit of document.querySelectorAll('input[type="submit"]')) {
+		attemptCheckout(submit);
+	}
+}
+
+function attemptCheckout(elem) {
+	// id, text, value
+	const strId = elem.attributes['id'] ? elem.attributes['id'].value : '';
+	const strText = elem.innerText || '';
+	const strValue = elem.value || '';
+
+	let regx = RST_PATTERNS.checkout;
+	if (!validElement(elem)) return;
+
+	if (!!strId && strId.match(regx)) {
+		// dispatchClickEvent(elem);
+		clickAutoPayButton(elem);
+	} else if (!!strText && strText.match(regx)) {
+		// dispatchClickEvent(elem);
+		clickAutoPayButton(elem);
+	} else if (!!strValue && strValue.match(regx)) {
+		// dispatchClickEvent(elem);
+		clickAutoPayButton(elem);
+	}
+}
+
+function clickAutoPayButton(elem) {
+    elem.click();
+	// // check if button has form
+	// if (elem.form && !elem.form.checkValidity()) return false;
+	// if (elem && (!elem.attributes['af-clicked'] || window.getComputedStyle(elem.form).getPropertyValue("opacity") > 0)) {
+	// 	elem.attributes['af-clicked'] = 'true';
+	// 	elem.click();
+	// }
+}
+
+function validElement() {
+    return true;
 }

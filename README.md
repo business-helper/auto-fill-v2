@@ -30,15 +30,20 @@
                 "avatar_url": "https://cdn.discordapp.com/avatars/asdfxxx.png"
             }
         },
-        "profile": {
-
-        },
+        "profile": {},
         "profiles": [PROFILE],
         "customs": [
             { "keyword": "keyword1", "value": "value1" }
         ],
+        "autoclicks": [
+            { 
+                "domain": "domain.com",
+                "clicks": ["Buy Now", "Pay Now"]
+            }
+        ],
         "settings": {
-            "authoCheckout": true,
+            "autoCheckout": true,
+            "autoFill": true,
         }
     }
 }

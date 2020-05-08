@@ -2,7 +2,6 @@
 docReady(function () {
     loadData();
     checkAuthAndExist(); // toggle auth
-    // tabSelected(document.querySelectorAll('.tabs .tab')[0]);
 
     document.getElementById('profile_names').addEventListener('change', function () {
         const value = this.value;
@@ -115,50 +114,36 @@ docReady(function () {
         saveCustomKeywords();
     })
 
-    document.getElementById('auto-checkout').addEventListener('change', function () {
-        const autoCheckout = this.checked;
-        chrome.storage.local.get(['data'], function (store) {
-            if (store && store.data) {
-                let options = {};
-                if (store.data.options !== undefined) {
-                    options = store.data.options;
-                }
-                options.autoCheckout = autoCheckout; console.log(options)
-                store.data.options = options;
-                chrome.storage.local.set({ data: store.data }, function () {
-                    // showAlertModal('Data saved successfully');
-                    loadData();
-                })
-            }
-        })
+    $('#domain-container').on('click', '.domain-wrapper .click-icon.plus', function() {
+        addDomainClick();
     })
-
-    document.getElementById('auto-active').addEventListener('change', function () {
-        const autoActive = this.checked;
-        if (autoActive === false) {
-            document.getElementById('auto-checkout').checked = false;
-        }
-        const autoCheckout = document.getElementById('auto-checkout').checked;
-        chrome.storage.local.get(['data'], function (store) {
-            if (store && store.data) {
-                let options = {};
-                if (store.data.options !== undefined) {
-                    options = store.data.options;
-                }
-                options.autoCheckout = autoCheckout;
-                options.autoActive = autoActive;
-                // console.log(options)
-                store.data.options = options;
-                chrome.storage.local.set({ data: store.data }, function () {
-                    // showAlertModal('Data saved successfully');
-                    loadData();
-                })
-            }
-        })
+    $('#domain-container').on('click', '.domain-wrapper .click-icon.trash', function() {
+        $(this).closest('.one-domain').remove();
+    })
+    $('#domain-container').on('click', '.one-click .click-icon.plus', function() {
+        let template = `
+        <div class="one-click">
+            <input class="form-control" placeholder="Click"/>
+            <img class="click-icon plus" src="../images/plus.png" />
+            <img class="click-icon trash" src="../images/trash.png" />
+        </div>`;
+        $(this).closest('.click-array').append(template);
+    })
+    $('#domain-container').on('click', '.one-click .click-icon.trash', function() {
+        $(this).closest('.one-click').remove();
+    })
+    $('#save-custom-clicks').on('click', function() {
+        saveCustomClick();
+    })
+    $('#add-custom-click').on('click', function() {
+        addDomainClick();
     })
 })
 
 function loadData() {
+    $('input').each(function(i, input) {
+        $(input).val('');
+    })
     chrome.storage.local.get(["data"], function (result) {
         console.log('[loadData]', result);
         if (result && result.data) {
@@ -174,6 +159,11 @@ function loadData() {
                     addCustomItem(custom.keyword, custom.value);
                 })
             }
+            if (result.data.autoclicks) {
+                updateAutoClickSection(result.data.autoclicks);
+            }
+        } else {
+            fillProfilesSelect({profiles: []});
         }
         setToggleSection(result && result.data ? result.data.settings || {} : {});
     })
@@ -182,8 +172,8 @@ function loadData() {
 // save profile data to profiles[]
 function saveProfile(profile) {
     chrome.storage.local.get(["data"], function (result) {
-        let profiles = [];
         let data = {};
+        let profiles = [];
 
         if (result && result.data) {
             data = result.data;
@@ -201,7 +191,6 @@ function saveProfile(profile) {
         }
         data.profiles = filterProfile(profiles);
         data.profile = profile;
-        data.mode = '1';
 
         chrome.storage.local.set({ data: data }, function () {
             showAlertModal('Data has been successfully saved!');
@@ -272,19 +261,19 @@ function fillProfilesSelect(data) {
 function fillProfileForm(profile) {
     document.getElementById('profile-name').value = profile.name;
     document.getElementById('email').value = profile.email;
-    document.getElementById('first-name').value = profile.bill.fName;
-    document.getElementById('last-name').value = profile.bill.lName;
-    document.getElementById('address1').value = profile.bill.address1;
-    document.getElementById('address2').value = profile.bill.address2;
-    document.getElementById('city').value = profile.bill.city;
-    document.getElementById('country').value = profile.bill.country;
-    document.getElementById('state').value = profile.bill.province;
-    document.getElementById('zipcode').value = profile.bill.zip;
-    document.getElementById('phone').value = profile.bill.phone;
-    document.getElementById('card-number').value = profile.card.number;
-    document.getElementById('month').value = profile.card.expMonth;
-    document.getElementById('year').value = profile.card.expYear;
-    document.getElementById('cvv').value = profile.card.cvv;
+    document.getElementById('first-name').value = profile.first_name;
+    document.getElementById('last-name').value = profile.last_name;
+    document.getElementById('address1').value = profile.address1;
+    document.getElementById('address2').value = profile.address2;
+    document.getElementById('city').value = profile.city;
+    document.getElementById('country').value = profile.country;
+    document.getElementById('state').value = profile.state;
+    document.getElementById('zipcode').value = profile.zip_code;
+    document.getElementById('phone').value = profile.phone;
+    document.getElementById('card-number').value = profile.card_number;
+    document.getElementById('month').value = profile.card_exp_mm;
+    document.getElementById('year').value = profile.card_exp_y4;
+    document.getElementById('cvv').value = profile.card_cvv;
 }
 
 // filter profile with new rule
@@ -292,7 +281,7 @@ function filterProfile(profiles) {
     if (typeof profiles == 'object') {
         let filtered = [];
         for (let profile of profiles) {
-            if (profile.bill && profile.card) filtered.push(profile);
+            filtered.push(profile);
         }
         return filtered;
     }
@@ -394,13 +383,22 @@ function saveCustomKeywords() {
             customs.push({ keyword: keyword, value: value });
         }
     })
+
     chrome.storage.local.get(['data'], function (store) {
         if (store && store.data) {
             store.data.customs = customs;
             chrome.storage.local.set({ data: store.data }, function () {
                 showAlertModal('Data has been saved successfully!');
+                updateCustomKeywords(customs);
             })
         }
+    })
+}
+
+function updateCustomKeywords(customs) {
+    $('#custom-container').html('');
+    customs.forEach(function (custom) {
+        addCustomItem(custom.keyword, custom.value);
     })
 }
 
@@ -414,9 +412,9 @@ function setToggleSection(options) {
         handleActiveColor: $('#toggle-auto-checkout').data('color')
     });
     $('#toggle-auto-fill').RestockToggle({
-        on: !!options.autoCheckout,
+        on: !!options.autoFill,
         onChange: function () {
-            updateSettings('autoCheckout', $('#toggle-auto-fill').RestockToggle('status'));
+            updateSettings('autoFill', $('#toggle-auto-fill').RestockToggle('status'));
         },
         backgroundColor: "#1E2435",
         handleActiveColor: $('#toggle-auto-fill').data('color')
@@ -455,4 +453,88 @@ function updateSettings(key, value) {
             console.log('[SETTING] - updated success');
         })
     })
+}
+
+function addDomainClick() {
+    let template = `
+    <div class="one-domain">
+        <div class="domain-wrapper">
+            <input class="form-control" placeholder="Domain"/>
+            <img class="click-icon plus" src="../images/plus.png" />
+            <img class="click-icon trash" src="../images/trash.png" />
+        </div>
+        <div class="click-array">
+            <div class="one-click">
+                <input class="form-control" placeholder="Click"/>
+                <img class="click-icon plus" src="../images/plus.png" />
+                <img class="click-icon trash" src="../images/trash.png" />
+            </div>
+        </div>
+    </div>
+    `;
+    $('#domain-container').append(template);
+}
+
+function saveCustomClick() {
+    let custom_clicks = [];
+    $('.one-domain').each(function(i, element) {
+        // console.log(element);
+        let domain_name = $(element).find('.domain-wrapper input').val();
+        let clicks = [];
+        let clickElements = $(element).find('.one-click').each(function(j, click) {
+            let click_label = $(click).find('input').val();
+            if (!!click_label) {
+                clicks.push(click_label);
+            }
+        })
+        if (!!domain_name && clicks.length > 0) {
+            custom_clicks.push({
+                domain: domain_name,
+                clicks: clicks
+            })
+        }
+    });
+    console.log(custom_clicks);
+    chrome.storage.local.get(['data'], function(result) {
+        let data = {};
+        if (result && result.data) {
+            data = result.data;
+        }
+        data.autoclicks = custom_clicks;
+        chrome.storage.local.set({data: data}, function() {
+            showAlertModal('Data had been saved successfully');
+            updateAutoClickSection(custom_clicks);
+        })
+    })
+}
+
+function updateAutoClickSection(domains) {
+    $('#domain-container').html('');
+    if (!!domains && domains.length > 0) {
+        domains.forEach(function(domain) {
+            let template = `
+            <div class="one-domain">
+                <div class="domain-wrapper">
+                    <input class="form-control" placeholder="Domain" value="{{DOMAIN}}"/>
+                    <img class="click-icon plus" src="../images/plus.png" />
+                    <img class="click-icon trash" src="../images/trash.png" />
+                </div>
+                <div class="click-array">
+                    {{CLICKS}}
+                </div>
+            </div>
+            `;
+            let clickElements = ``;
+            domain.clicks.forEach(function(click) {
+                clickElements += `
+                <div class="one-click">
+                    <input class="form-control" placeholder="Click" value="${click}"/>
+                    <img class="click-icon plus" src="../images/plus.png" />
+                    <img class="click-icon trash" src="../images/trash.png" />
+                </div>
+                `;
+            })
+            $("#domain-container").append(template.replace('{{DOMAIN}}', domain.domain).replace('{{CLICKS}}', clickElements));
+        })
+    }
 }

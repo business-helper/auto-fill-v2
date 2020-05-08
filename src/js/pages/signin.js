@@ -1,6 +1,6 @@
 
 docReady(function() {
-    // checkActivation();
+    checkActivation();
     document.getElementById('btn-activate').addEventListener('click', activateUser);
     document.getElementById('btn-authorize').addEventListener('click', authorizeUser);
     document.getElementById('to_authorize').addEventListener('click', showAuthorizeForm);
