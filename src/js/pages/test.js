@@ -38,7 +38,9 @@ const RST_PATTERNS = {
 
 
 docReady(function () {
-    scanEelements();
+    setTimeout(function () {
+        scanEelements();
+    }, 500);    
 })
 
 function scanEelements() {
@@ -58,9 +60,10 @@ function scanEelements() {
             card_exp_y4: "2023",
             card_cvv: "123",
         },
-        customs: {
-            {key: 'activation Token', value: "TOKEN 1"}
-        },
+        customs: [
+            {key: 'activation Token', value: "TOKEN 1"},
+            {key: 'Discord Username', value: "Tai#0002"}
+        ],
         settings: {
 
         }
@@ -76,13 +79,15 @@ function scanEelements() {
 
     // select
     let selectboxes = document.getElementsByTagName('select');
+    for (let input of selectboxes) {
+        let instance = new AutoFillElement(input, result);
+        instance.startAutoFill();
+    }
 }
 
-
-
 class AutoFillElement {
-    element;
-    info;
+    element;    // target element
+    info;       // data source to autofill forms
     constructor(elem, info) {
         this.element = elem;
         this.info = info;
@@ -94,7 +99,11 @@ class AutoFillElement {
         if (!!marker && marker == RST_MARKER_END) { return false; } // already done
 
         this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
-        this.checkDefaultPattern();
+        let autofilled = this.checkDefaultPattern();
+        if (autofilled === false) {
+            this.checkCustomMatches();
+        }
+
     }
 
     checkDefaultPattern = function () {
@@ -103,14 +112,23 @@ class AutoFillElement {
             for (let key in RST_PATTERNS) {
                 if (!!str.match(RST_PATTERNS[key])) {
                     console.log('[MATCH]', str, key, !!str.match(RST_PATTERNS[key]));
-                    this.updateElementValue(this.getProfileValue(key));
+                    return this.updateElementValue(this.getProfileValue(key));
                 }
             }
         }
+        return false;
     }
 
     checkCustomMatches = function () {
-
+        for (let str of this.getComparableStrings()) {
+            for (let custom of this.info.customs) {
+                if (this.matchKeyword(str, custom.key)) {
+                    console.log('[Custom match]', str, custom);
+                    this.updateElementValue(custom.value);
+                }
+            }
+        }
+        return false;
     }
 
     getComparableStrings = function () {
@@ -151,39 +169,28 @@ class AutoFillElement {
                 return this.info.profile[key];
             case "full_name":
                 return `${this.info.profile['first_name']} ${this.info.profile['last_name']}`;
+            case "card_exp_month": return this.info.profile['card_exp_mm'];
+            case "card_exp_year": return this.info.profile['card_exp_y4']
             default:
                 return "";
         }
     }
 
+    matchKeyword = function(target, keyword) {
+        target = target.toLowerCase();
+        keyword = keyword.toLowerCase();
+        if (target) {
+            return target.includes(keyword);
+        }
+        return false;
+    }
+
     updateElementValue = function(val) {
-        console.log(val)
+        console.log(val, this.element.tagName)
         // this.element.focus();
         this.element.value = val;
         this.element.setAttribute(RST_MARKER, RST_MARKER_END);
+        return true;
     }
 }
 
-function docReady(fn) {
-    // see if DOM is already available
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-        // call on next available tick
-        setTimeout(fn, 1);
-    } else {
-        document.addEventListener("DOMContentLoaded", fn);
-    }
-}
-
-class Car {
-    constructor(brand) {
-        this.carname = brand;
-        window.addEventListener('scroll', this.printCar);
-    }
-
-    printCar() {
-        console.log(`My Car is ${this.carname}`, TEST_CON);
-    }
-}
-
-mycar = new Car('Ford');
-console.log('[my car]', mycar.carname);

@@ -47,15 +47,8 @@ body {
     font-weight: bold;
 }
 
-.container {
-    max-width: 400px;
-    padding: 20px 15px 30px 15px;
-    min-width: 300px;
-    margin: auto;
-}
-
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .flex {
@@ -117,6 +110,8 @@ input:focus, select:focus {
     outline: none;
     box-shadow:  0 0 8px #656bb7d1;
 }
+
+input::placeholder { text-align: center; }
 
 option {
     padding: 5px 0;

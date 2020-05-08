@@ -12,7 +12,7 @@
 
  ```json
 {
-    "restil": {
+    "data": {
         "activation": {
             "success": true | false,
             "key": "2343-...",

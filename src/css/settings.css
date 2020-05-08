@@ -1,32 +1,63 @@
 :root {}
 
-.tabs {
+#header { background-color: var(--bg-body); padding-bottom: 0; }
+
+#header img {
+    height: 70px;
+}
+
+.toggle-box { display: flex; align-items: center; margin-left: 15px; margin-right: 15px; }
+
+.toggle-box label { margin-bottom: 0; margin-right: 10px; }
+
+.page-container { 
+    max-width: 100% !important;
     display: flex;
-    justify-content: space-between;
-    padding-bottom: 10px;
+    flex-wrap: wrap;
 }
 
-.tabs .tab {
+.container {
+    width: 33%;
+    box-sizing: border-box;
+    padding: 15px;
+}
+
+.container .inner-wrapper {
     width: 100%;
+    background-color: #161D2F;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        width: 100%;
+        margin: 0 auto 2rem auto;        
+    }
+    .container .inner-wrapper {
+        max-width: 400px;
+        margin: auto;
+    }
+}
+
+.section-wrapper {
+    box-sizing: border-box;
+    position: relative;
+    padding: 25px 10px 10px 10px;
+    border: 2px solid #9a9a9a14;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+}
+
+.section-wrapper label[for="section-wrapper"] {
+    position: absolute;
+    top: -0.65rem;
+    left: 20px;
+    color: #00E6F3;
     font-size: 14px;
-    text-align: center;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    cursor: pointer;
-    padding-top: 7px;
-    transition: all .2s;
-    background-color: #1b2235;
-}
-
-.tabs .tab:hover {
-    color: #a9c7ec;
-}
-
-.tabs .tab.active {
-    border-bottom: 1px solid #404096;
-    font-weight: bold;
-    color: #a9c7ec;
-    background-color: #292d3a;
+    background: #161d2f;
+    padding: 0 10px;
 }
 
 button.add {}
@@ -43,9 +74,10 @@ button.save {
 
 #btn-remove-profile { color: #FF4D6D; }
 #btn-new-profile { color: #2DFF81; }
-#im-ex-container { margin-bottom: 15px; float: right; }
+#im-ex-container { margin-bottom: 15px; position: relative; min-height: 30px; }
+#im-ex-container .float-right { position: absolute; top: 0; right: 10px; }
 #im-ex-container button.btn { border: none; padding: 5px 15px; border-radius: 5px; }
-#im-ex-container button.btn.export { color: #FF4C6D; }
+#im-ex-container button.btn.export { color: #FF4C6D; margin-right: 0; }
 #import-file { position: fixed; left: -100%; top: -100%; }
 /* Custom Tab */
 
