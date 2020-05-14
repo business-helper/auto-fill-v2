@@ -45,7 +45,6 @@ const RSTEXTRA_PATTERNS = {
     terms: new RegExp("agree.*?terms|agree.*?privacy", "i")
 };
 
-
 class AutoFillElement {
     element;    // target element
     info;       // data source to autofill forms
