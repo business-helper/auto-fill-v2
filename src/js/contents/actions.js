@@ -583,7 +583,6 @@ function calculateMath(strFormula) {
 
 
 
-
 function AgreeTerms() {
     let labels = document.getElementsByTagName('label');
     for (let label of labels) {
