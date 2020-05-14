@@ -1,7 +1,7 @@
 
 docReady(function () {
     loadData();
-    checkAuthAndExist(); // toggle auth
+    // checkAuthAndExist(); // toggle auth
 
     document.getElementById('profile_names').addEventListener('change', function () {
         const value = this.value;
@@ -290,7 +290,7 @@ function filterProfile(profiles) {
 
 /** Check if user already is authorized, if not, close self tab */
 function checkAuthAndExist() {
-    return true;
+    // return true;
     chrome.storage.local.get(["data"], function (store) {
         if (store && store.data && store.data.activation) {
             // return true;
@@ -343,8 +343,8 @@ function tabSelected(elem) {
 
 function fillActivationSection(activation) {
     document.getElementById('actv_key').value = activation.key
-    document.getElementById('actv_hwid').value = activation.activation.hwid;
-    document.getElementById('actv_device').value = activation.activation.device_name;
+    // document.getElementById('actv_hwid').value = activation.activation.hwid;
+    // document.getElementById('actv_device').value = activation.activation.device_name;
     document.getElementById('actv_token').value = activation.activation_token;
 }
 

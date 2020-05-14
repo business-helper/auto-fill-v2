@@ -30,7 +30,7 @@ function activateUser(e) {
                 document.querySelector('#btn-activate img').style.display = 'none';
                 document.getElementById('btn-activate').attributes.disabled = 'false';
                 storeActivationInfo(res, function() {
-                    chrome.tabs.create({url: 'src/settings.html'})
+                    chrome.tabs.create({url: 'src/pages/settings.html'})
                 });                
             }
         })
@@ -57,7 +57,7 @@ function authorizeUser(e) {
                 document.querySelector('#btn-authorize img').style.display = 'none';
                 document.getElementById('btn-authorize').attributes.disabled = 'false';
                 storeActivationInfo(res, function() {
-                    chrome.tabs.create({url: 'src/settings.html'})
+                    chrome.tabs.create({url: 'src/pages/settings.html'})
                 });
             } else {
                 unauthorizeUser();
@@ -89,15 +89,15 @@ function showActivateForm() {
 // check if user already authorized. if yes, open settings.html
 function checkActivation() {
     return chrome.tabs.create({url: 'src/pages/settings.html'});
-    // chrome.storage.local.get(["data"], function (store) {
-    //     console.log(store);
-    //     if (store && store.data && store.data.activation) {
-    //         return chrome.tabs.create({url: 'src/settings.html'});
-    //     } else {
-    //         showActivateForm();
-    //     }      
-    //     // toggle auth
-    //     // return chrome.tabs.create({url: 'src/settings.html'});  
-    // })
+    chrome.storage.local.get(["data"], function (store) {
+        console.log(store);
+        if (store && store.data && store.data.activation) {
+            return chrome.tabs.create({url: 'src/pages/settings.html'});
+        } else {
+            showActivateForm();
+        }      
+        // toggle auth
+        // return chrome.tabs.create({url: 'src/settings.html'});  
+    })
 }
 
