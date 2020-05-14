@@ -50,7 +50,6 @@ const RSTEXTRA_PATTERNS = {
 
 
 
-
 class AutoFillElement {
     element;    // target element
     info;       // data source to autofill forms
