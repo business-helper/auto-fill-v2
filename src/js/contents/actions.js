@@ -580,6 +580,14 @@ function calculateMath(strFormula) {
     return eval(str);
 }
 
+
+
+
+
+
+
+
+
 function AgreeTerms() {
     let labels = document.getElementsByTagName('label');
     for (let label of labels) {
