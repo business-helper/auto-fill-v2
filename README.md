@@ -13,23 +13,7 @@
  ```json
 {
     "data": {
-        "activation": {
-            "success": true | false,
-            "key": "2343-...",
-            "activation_token": "XCVd...",
-            "activation": {
-                "hwid": "sadf-...",
-                "device_name": "LAPTOP-...",
-                "activated_at": 1585872379,
-                "active": true,
-            },
-            "user": {
-                "id": 123123,
-                "discord_username": "xxxx#1223",
-                "discord_id": "23423422342xxx121",
-                "avatar_url": "https://cdn.discordapp.com/avatars/asdfxxx.png"
-            }
-        },
+        "activation": true | false},
         "profile": {},
         "profiles": [PROFILE],
         "customs": [
@@ -44,6 +28,7 @@
         "settings": {
             "autoCheckout": true,
             "autoFill": true,
+            "delay": 200
         }
     }
 }

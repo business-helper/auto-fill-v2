@@ -1,7 +1,7 @@
 
 docReady(function () {
     loadData();
-    // checkAuthAndExist(); // toggle auth
+    checkAuthAndExist(); // toggle auth
 
     document.getElementById('profile_names').addEventListener('change', function () {
         const value = this.value;
@@ -42,7 +42,7 @@ docReady(function () {
     document.getElementById('import-profile').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('import-file').click();
-    })
+    });
 
     document.getElementById('import-file').addEventListener('change', function (e) {
         e.preventDefault();
@@ -57,7 +57,7 @@ docReady(function () {
             }
             reader.readAsText(this.files[0])
         }
-    })
+    });
 
     document.getElementById('btn-save-profile').addEventListener('click', function (e) {
         e.preventDefault();
@@ -88,7 +88,7 @@ docReady(function () {
                 })
             }
         })
-    })
+    });
 
     document.getElementById('btn-new-profile').addEventListener('click', function () {
         document.getElementById('profile_names').value = -1;
@@ -96,30 +96,42 @@ docReady(function () {
         form.querySelectorAll('input').forEach(function (input) {
             input.value = '';
         })
-    })
+    });
 
     // add custom keywords
     document.getElementById('add-custom').addEventListener('click', function () {
         addCustomItem()
-    })
+    });
 
     document.querySelectorAll('.remove-custom').forEach(function (removeBtn) {
         removeBtn.addEventListener('click', function () {
             console.log('wanna remove?');
             this.parentNode.remove();
         })
-    })
+    });
 
     document.getElementById('save-customs').addEventListener('click', function () {
         saveCustomKeywords();
-    })
+    });
+
+    // save custom delay
+    document.getElementById('save-custom-delay').addEventListener('click', function() {
+        let delay = 200;
+        let customDelay = $('#custom_delay').val();
+        if (!!customDelay) {
+            delay = customDelay;
+        }
+        updateSettings('delay', delay, () => {
+            showAlertModal('Data saved successfully');
+        });
+    });
 
     $('#domain-container').on('click', '.domain-wrapper .click-icon.plus', function() {
         addDomainClick();
-    })
+    });
     $('#domain-container').on('click', '.domain-wrapper .click-icon.trash', function() {
         $(this).closest('.one-domain').remove();
-    })
+    });
     $('#domain-container').on('click', '.one-click .click-icon.plus', function() {
         let template = `
         <div class="one-click">
@@ -128,16 +140,16 @@ docReady(function () {
             <img class="click-icon trash" src="../images/trash.png" />
         </div>`;
         $(this).closest('.click-array').append(template);
-    })
+    });
     $('#domain-container').on('click', '.one-click .click-icon.trash', function() {
         $(this).closest('.one-click').remove();
-    })
+    });
     $('#save-custom-clicks').on('click', function() {
         saveCustomClick();
-    })
+    });
     $('#add-custom-click').on('click', function() {
         addDomainClick();
-    })
+    });
 })
 
 function loadData() {
@@ -162,6 +174,11 @@ function loadData() {
             if (result.data.autoclicks) {
                 updateAutoClickSection(result.data.autoclicks);
             }
+            let delay = 200;
+            if (result.data && result.data.settings && result.data.settings.delay && result.data.settings.delay) {
+                delay = result.data.settings.delay;
+            }
+            $('#custom_delay').val(delay);
         } else {
             fillProfilesSelect({profiles: []});
         }
@@ -292,23 +309,8 @@ function filterProfile(profiles) {
 function checkAuthAndExist() {
     // return true;
     chrome.storage.local.get(["data"], function (store) {
-        if (store && store.data && store.data.activation) {
-            // return true;
-            const token = store.data.activation.activation_token;
-            // check through API
-            ajaxGet(authURL(`/activations/${token}`), { 'Content-Type': 'application/json' })
-                .then(function (res) {
-                    // console.log(res);
-                    if (res.success && res.success === true) {
-                        return true;
-                    } else {
-                        unauthorizeUser(store, closeSelf);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error)
-                    unauthorizeUser(store, closeSelf);
-                });
+        if (store && store.data && store.data.activation === true) {
+            // pass
         } else {
             closeSelf();
         }
@@ -436,7 +438,7 @@ function saveProfileImport({ profiles, profile }) {
     });
 }
 
-function updateSettings(key, value) {
+function updateSettings(key, value, callback=null) {
     console.log(key, value);
     chrome.storage.local.get(['data'], function (res) {
         let data = {};
@@ -451,6 +453,9 @@ function updateSettings(key, value) {
         data.settings = settings;
         chrome.storage.local.set({ data: data }, function (res) {
             console.log('[SETTING] - updated success');
+            if (typeof callback === 'function') {
+                callback();
+            }
         })
     })
 }

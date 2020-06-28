@@ -2,6 +2,7 @@ const RST_MARKER = 'af-restock';
 const RST_MARKER_START = 'RST-0';
 const RST_MARKER_END = 'RST-1';
 let storage = {};
+let dataLoaded = false;
 let customClickAttempts = 0;
 let intervalInstance;
 let operateCount = 0;
@@ -61,8 +62,9 @@ class AutoFillElement {
 
         // this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
         let autofilled = this.checkDefaultPattern();
+        
         if (!autofilled) {
-            this.checkCustomMatches();
+            return this.checkMath() || this.checkCustomMatches();
         }
     }
 
@@ -74,6 +76,7 @@ class AutoFillElement {
                     // if (key == "state") {
                     //     console.log('[firstName]', this.getComparableStrings(), this.element);
                     // }
+                    // console.log('[default]', `key: ${key}, val: ${this.getProfileValue(key)}`);
                     this.element.setAttribute('af-key', key);
                     return this.updateElementValue(this.getProfileValue(key), key);
                 }
@@ -91,19 +94,18 @@ class AutoFillElement {
             for (let str of this.getComparableStrings()) {
                 for (let custom of this.info.customs) {
                     if (custom.keyword == '(calculator)' && custom.value == '(calculator)' && !!str.replace(/[^-x()\d/*+.]/g, '')) {
-                        console.log('[Hey Math]');
                         const regX = /[^-x()\d/*+.]/g;
                         try {
                             let mathVal = eval(str
                                 .replace(regX, '')
                                 .replace(/[x]/g, '*'));
-                            this.updateElementValue(mathVal);
+                            this.updateElementValue(mathVal, 'math');
                         } catch (e) {
                             // console.log('[calc error]', e);
                         }
                     } else if (this.matchKeyword(str, custom.keyword)) {
                         // console.log('[Custom match]', str, custom);
-                        this.updateElementValue(custom.value);
+                        this.updateElementValue(custom.value, 'custom');
                     }
                 }
             }
@@ -250,7 +252,12 @@ class AutoFillElement {
             } else {
                 if (!!marker && marker == RST_MARKER_END) { return false; } // already done
                 this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
+                
+                // fix address 2
+                const afKey = this.element.getAttribute('af-key');
+                if (!!afKey && afKey != key) return false;
 
+                // console.log('[update input]', `key: ${key}, val: ${val}`);
                 // this.element.focus();
                 this.element.value = val;
                 // this.element.dispatchEvent(new Event('change'));
@@ -266,12 +273,26 @@ class AutoFillElement {
         }
         return false;
     }
+
+    checkMath = function() {
+        return false;
+        const labels = this.getComparableStrings();
+        // const regx = new RegExp('')
+    }
 }
 
 docReady(function () {
-    startMode1();
+    // startMode1();
     // startMode2();
     // startMode3();
+    chrome.extension.sendMessage({ type: 'requestData' }, function (result) {
+        if (result.data) {
+            storage = result.data;
+            dataLoaded = true;
+            // startWorkflowBatch(result.data);
+            startMode1();
+        }
+    });
 })
 
 function startMode1() {
@@ -303,7 +324,7 @@ function startMode1() {
             document.dispatchEvent(new CustomEvent('scroll'));
         }, 30)
         // document.dispatchEvent(new CustomEvent('scroll'));
-    }, 200);
+    }, storage.settings.delay || 200);
 }
 
 function startMode2() {
@@ -341,9 +362,9 @@ function startWorkflowBatch(data) {
     // console.log('[startWorkflowBatch]', data);
     // scan element, custom, 
     // custom click, autocheckout
-    // if (!data || !data.activation) {
-    //     return false;
-    // }
+    if (!data || !data.activation) {
+        return false;
+    }
     // console.log(!!data && !!data.settings && data.settings.autoFill !== undefined && data.settings.autoFill === true)
     if (!!data && !!data.settings && data.settings.autoFill !== undefined && data.settings.autoFill === true) {
         scanElements(data);  //!

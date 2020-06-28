@@ -1,8 +1,12 @@
 const APP_SETTINGS = {
 	auth_recheck: false,
-	auth_endpoint: "https://www.restockintel.com/api/v1",
+	auth_endpoint: "https://www.bladznetwork.com/api/v1",
 	auth_key: 'ak_VMwyTncV95jssx8DS-2C',
 	ENC_KEY: 'RESTOCK$$!WITH*(TAI:)',
+	DiSCORD_CLIENT_ID: '695192092061859850',
+	DISCORD_CLIENT_SECRET: '7OgYcu5BNNdgi0XWytudFe2XXM909-pC',
+	DISCORD_SERVER_ID: '695356483545858178',
+	// DISCORD_SERVER_ID: '687235934692835338'
 }
 
 const US_STATES = [

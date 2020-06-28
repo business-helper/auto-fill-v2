@@ -9,28 +9,17 @@
     <div class="header">
         Au&#8203;t&#8203;h&#8203;orization
     </div>
-    <form class="container" id='activate_form'>
-        <div class="form-group">
-            <input class="form-control" name="act_key" id="act_key" placeholder="Key" required />
+    <div class="msg-container" id="loading-con">
+        <p>Processing...</p>
+    </div>
+    <div class="msg-container hide" id="failed-con">
+        <p>Failed to authorize...</p>
+        <div style="display: flex; justify-content:flex-end;">
+            <button id="try-again">Try again</button>
         </div>
-        <button type=submit class="form-control" id="btn-activate">
-            <img class="preloader align-center" src="../images/loading.gif" />
-            <label class="align-center">Activate Now!</label>
-        </button>
-        <p style="margin-top: 5px;">Already activated? <span class="link_to" id="to_authorize">Authorize!</span></p>
-    </form>
-
-    <form class="container" id='authorize_form'>
-        <div class="form-group">
-            <input class="form-control" name="act_token" id="act_token" placeholder="Activation Token" required />
-        </div>
-        <button type=submit class="form-control" id="btn-authorize">
-            <img class="preloader align-center" src="../images/loading.gif" />
-            <label class="align-center">Authorize</label>
-        </button>
-        <p style="margin-top: 5px;">Don't have activation token? <span class="link_to" id="to_activate">Activate
-                Now!</span></p>
-    </form>
+    </div>
+    <script src="../js/lib/axios.min.js"></script>
+    <script src="../js/lib/qs.min.js"></script>
     <script src="../js/common/common.js"></script>
     <script src="../js/pages/signin.js"></script>
 </body>

@@ -1,10 +1,12 @@
 
-docReady(function() {
-    checkActivation();
-    document.getElementById('btn-activate').addEventListener('click', activateUser);
-    document.getElementById('btn-authorize').addEventListener('click', authorizeUser);
-    document.getElementById('to_authorize').addEventListener('click', showAuthorizeForm);
-    document.getElementById('to_activate').addEventListener('click', showActivateForm);
+docReady(function () {
+    document.getElementById('try-again').addEventListener('click', function (e) {
+        e.preventDefault();
+        triggerDiscordAuth();
+    });
+
+    showLoadingMsg();
+    triggerDiscordAuth();
 })
 
 function activateUser(e) {
@@ -24,21 +26,21 @@ function activateUser(e) {
         document.querySelector('#btn-activate img').style.display = 'inherit';
         document.getElementById('btn-activate').attributes.disabled = 'true';
         ajaxPost(authURL(`/activations`), data, { 'Content-Type': 'application/json' })
-        .then(function(res) {
-            console.log(res);
-            if (res.success && res.success === true) {
+            .then(function (res) {
+                console.log(res);
+                if (res.success && res.success === true) {
+                    document.querySelector('#btn-activate img').style.display = 'none';
+                    document.getElementById('btn-activate').attributes.disabled = 'false';
+                    storeActivationInfo(res, function () {
+                        chrome.tabs.create({ url: 'src/pages/settings.html' })
+                    });
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
                 document.querySelector('#btn-activate img').style.display = 'none';
                 document.getElementById('btn-activate').attributes.disabled = 'false';
-                storeActivationInfo(res, function() {
-                    chrome.tabs.create({url: 'src/pages/settings.html'})
-                });                
-            }
-        })
-        .catch(function(error) {
-            console.log(error)
-            document.querySelector('#btn-activate img').style.display = 'none';
-            document.getElementById('btn-activate').attributes.disabled = 'false';
-        });
+            });
     }
 }
 
@@ -51,22 +53,22 @@ function authorizeUser(e) {
         document.querySelector('#btn-authorize img').style.display = 'inherit';
         document.getElementById('btn-authorize').attributes.disabled = 'true';
         ajaxGet(authURL(`/activations/${token}`), { 'Content-Type': 'application/json' })
-        .then(function(res) {
-            // console.log(res);
-            if (res.success && res.success === true) {
-                document.querySelector('#btn-authorize img').style.display = 'none';
-                document.getElementById('btn-authorize').attributes.disabled = 'false';
-                storeActivationInfo(res, function() {
-                    chrome.tabs.create({url: 'src/pages/settings.html'})
-                });
-            } else {
-                unauthorizeUser();
-            }
-        })
-        .catch(function(error) {
-            console.log(error)
-            unauthorizeUser()
-        });
+            .then(function (res) {
+                // console.log(res);
+                if (res.success && res.success === true) {
+                    document.querySelector('#btn-authorize img').style.display = 'none';
+                    document.getElementById('btn-authorize').attributes.disabled = 'false';
+                    storeActivationInfo(res, function () {
+                        chrome.tabs.create({ url: 'src/pages/settings.html' })
+                    });
+                } else {
+                    unauthorizeUser();
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+                unauthorizeUser()
+            });
     }
 }
 
@@ -88,16 +90,116 @@ function showActivateForm() {
 
 // check if user already authorized. if yes, open settings.html
 function checkActivation() {
-    return chrome.tabs.create({url: 'src/pages/settings.html'});
+    return chrome.tabs.create({ url: 'src/pages/settings.html' });
     chrome.storage.local.get(["data"], function (store) {
         console.log(store);
         if (store && store.data && store.data.activation) {
-            return chrome.tabs.create({url: 'src/pages/settings.html'});
+            return chrome.tabs.create({ url: 'src/pages/settings.html' });
         } else {
             showActivateForm();
-        }      
+        }
         // toggle auth
         // return chrome.tabs.create({url: 'src/settings.html'});  
     })
+}
+
+function triggerDiscordAuth() {return;
+    const scopes = ['identity', 'guilds'];
+    chrome.identity.launchWebAuthFlow(
+        { url: 'https://discord.com/api/oauth2/authorize?client_id=695192092061859850&redirect_uri=https%3A%2F%2Fnblohhdbodncnkkdjbcobogjhaefmimd.chromiumapp.org%2Fprovider_cb&response_type=code&scope=identify%20guilds', 'interactive': true },
+        function (url) {
+            const urlObj = new URL(url);
+            let code = urlObj.searchParams.get('code');
+            const data = {
+                client_id: APP_SETTINGS.DiSCORD_CLIENT_ID,
+                client_secret: APP_SETTINGS.DISCORD_CLIENT_SECRET,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: 'https://nblohhdbodncnkkdjbcobogjhaefmimd.chromiumapp.org/provider_cb',
+                scope: scopes.join(' '),
+            };
+
+            axios({
+                method: 'post',
+                url: 'https://discordapp.com/api/v6/oauth2/token',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                data: Qs.stringify(data),
+            })
+                .then(res => {
+                    console.log('[token]', res)
+                    let token = res.data.access_token;
+
+                    axios({
+                        method: 'GET',
+                        // url: 'https://discordapp.com/api/v6/channels/695356483545858178/messages',
+                        url: 'https://discordapp.com/api/v6/users/@me/guilds',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    })
+                        .then(res => {
+                            const guilds = res.data;
+                            for (let guild of guilds) {
+                                if (guild.id === APP_SETTINGS.DISCORD_SERVER_ID) {
+                                    setActive(true);
+                                    return;
+                                }
+                            }
+                            setActive(false);
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            showFailtureMsg();
+                        })
+                })
+                .catch(err => {
+                    console.error(err);
+                    showFailtureMsg();
+                })
+        }
+    );
+}
+
+function setActive(active = false) {
+    console.log('[active]', active);
+    chrome.storage.local.get(['data'], function (res) {
+        let data = {
+            activation: false,
+            profile: {},
+            profiles: [],
+            customs: [],
+            autoclicks: [
+            ],
+            settings: {
+                autoCheckout: false,
+                autoFill: true,
+                delay: 200
+            }
+        }
+        if (res.data !== undefined) {
+            data = res.data;
+        }
+
+        data.activation = active;
+
+        chrome.storage.local.set({ data: data }, function (res) {
+            console.log('[SETTING] - updated success');
+            if (active === true) {
+                return chrome.tabs.create({ url: 'src/pages/settings.html' });
+            }
+        })
+    })
+}
+
+function showFailtureMsg() {
+    document.getElementById('failed-con').classList.remove('hide');
+    document.getElementById('loading-con').classList.add('hide');
+}
+
+function showLoadingMsg() {
+    document.getElementById('failed-con').classList.add('hide');
+    document.getElementById('loading-con').classList.remove('hide'); 
 }
 

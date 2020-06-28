@@ -12,3 +12,21 @@ form{ min-height: 50px; }
 
 .link_to { font-weight: bold; cursor: pointer; transition: color 0.2s; }
 .link_to:hover { color: #cccccc; }
+
+.msg-container { 
+    display: flex;
+    min-height: 100px;
+    width: 300px;
+    margin: auto;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.msg-container.hide { display: none; }
+
+#try-again {
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+}
