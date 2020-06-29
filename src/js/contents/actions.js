@@ -47,14 +47,14 @@ const RSTEXTRA_PATTERNS = {
 };
 
 class AutoFillElement {
-    element;    // target element
-    info;       // data source to autofill forms
+    // element = undefined;    
+    // info = undefined;       
     constructor(elem, info) {
         this.element = elem;
         this.info = info;
     }
 
-    startAutoFill = function () {
+    startAutoFill() {
         // check attribute
         if (!this.element) return false;
         const marker = this.element.getAttribute(RST_MARKER); //console.log(!!marker);
@@ -68,7 +68,7 @@ class AutoFillElement {
         }
     }
 
-    checkDefaultPattern = function () {
+    checkDefaultPattern() {
         // priority: id, name, placeholder, label
         for (let str of this.getComparableStrings()) {
             for (let key in RST_PATTERNS) {
@@ -85,7 +85,7 @@ class AutoFillElement {
         return false;
     }
 
-    checkCustomMatches = function () {
+    checkCustomMatches() {
         // console.log('[tagname]', this.element.tagName.toLowerCase());
         // if (this.element.tagName.toLowerCase() == 'select') {
         //     console.log('[SELECT can]', this.getComparableStrings(), this.element);
@@ -121,7 +121,7 @@ class AutoFillElement {
         return false;
     }
 
-    getComparableStrings = function () {
+    getComparableStrings() {
         // id, name, placehodler, label
         // console.log('[here]');
         let strArray = [];
@@ -155,7 +155,7 @@ class AutoFillElement {
         return strArray;
     }
 
-    filterString = function (val) {
+    filterString(val) {
         const filterElementId = 'RST-AF-FILTER';
         let filterElement = document.getElementById(filterElementId);
         if (!filterElement) {
@@ -170,7 +170,7 @@ class AutoFillElement {
         return filterElement.value;
     }
 
-    getProfileValue = function (key) {
+    getProfileValue(key) {
         switch (key) {
             case "address1": case "address2": case "email": case "first_name": case "last_name":
             case "city": case "state": case "country": case "zip_code": case "card_number":
@@ -189,7 +189,7 @@ class AutoFillElement {
         }
     }
 
-    matchKeyword = function (target, keyword) {
+    matchKeyword(target, keyword) {
         try {
             target = target.toLowerCase();
             keyword = keyword.toLowerCase();
@@ -203,7 +203,7 @@ class AutoFillElement {
         }
     }
 
-    updateElementValue = function (val, key = '') {
+    updateElementValue(val, key = '') {
         if (!!val) {
             const marker = this.element.getAttribute(RST_MARKER);
 
@@ -274,12 +274,13 @@ class AutoFillElement {
         return false;
     }
 
-    checkMath = function() {
+    checkMath() {
         return false;
         const labels = this.getComparableStrings();
         // const regx = new RegExp('')
     }
 }
+
 
 docReady(function () {
     // startMode1();

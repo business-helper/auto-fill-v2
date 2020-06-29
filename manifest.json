@@ -22,7 +22,7 @@
     "declarativeContent",
     "identity",
     "storage",
-    "webRequest",
+    "webRequest"
   ],
   "background": {
     "scripts": [
