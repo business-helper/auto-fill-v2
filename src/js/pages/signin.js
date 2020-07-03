@@ -106,8 +106,15 @@ function checkActivation() {
 function triggerDiscordAuth() {//return;
     const scopes = ['identity', 'guilds'];
     chrome.identity.launchWebAuthFlow(
-        { url: 'https://discord.com/api/oauth2/authorize?client_id=695192092061859850&redirect_uri=https%3A%2F%2Fnblohhdbodncnkkdjbcobogjhaefmimd.chromiumapp.org%2Fprovider_cb&response_type=code&scope=identify%20guilds', 'interactive': true },
+        { 
+            url: 'https://discord.com/api/oauth2/authorize?client_id=695192092061859850&redirect_uri=https%3A%2F%2Fnblohhdbodncnkkdjbcobogjhaefmimd.chromiumapp.org%2Fprovider_cb&response_type=code&scope=identify%20guilds', 
+            'interactive': true 
+        },
         function (url) {
+            if (!url) {
+                showFailtureMsg();
+                return;
+            }
             const urlObj = new URL(url);
             let code = urlObj.searchParams.get('code');
             const data = {

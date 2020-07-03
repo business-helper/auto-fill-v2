@@ -61,8 +61,8 @@ class AutoFillElement {
         // if (!!marker && marker == RST_MARKER_END) { return false; } // already done
 
         // this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
-        let autofilled = this.checkDefaultPattern();
-        
+        let autofilled = this.checkDefaultPattern(); // console.log(autofilled);
+
         if (!autofilled) {
             return this.checkMath() || this.checkCustomMatches();
         }
@@ -252,7 +252,7 @@ class AutoFillElement {
             } else {
                 if (!!marker && marker == RST_MARKER_END) { return false; } // already done
                 this.element.setAttribute(RST_MARKER, RST_MARKER_START); // mark as initialized
-                
+
                 // fix address 2
                 const afKey = this.element.getAttribute('af-key');
                 if (!!afKey && afKey != key) return false;
@@ -275,12 +275,101 @@ class AutoFillElement {
     }
 
     checkMath() {
-        return false;
         const labels = this.getComparableStrings();
+        // console.log(labels);
         // const regx = new RegExp('')
+        const regMath = /math(\s)*[(]+.*[)]+/gi;
+        for (let label of labels) {
+            if (label.match(regMath)) {
+                const regRemove = /math|(\s)+|[()]+/gi;
+                const equation = label.replace(regRemove, '');
+                const solver = new EqSolver(equation);
+                const answer = solver.getAnswer();
+                this.updateElementValue(answer.toString());
+            }
+        }
+        return false;
     }
 }
 
+class EqSolver {
+    constructor(eq_str) {
+        this.str_equation = eq_str;
+    }
+
+    getAnswer() {
+        if (this.str_equation.includes(',')) {
+            return this.solveMultipleEq(this.str_equation);
+        } else {
+            return this.sovleSingleEq(this.str_equation);
+        }
+    }
+
+    solveMultipleEq(str_src) {
+        const eqArray = str_src.replace(/(\s)*/gi, '').split(',');
+        let variables = {};
+        let strFinalEq = "";
+        for (let strEq of eqArray) {
+            const res = this.checkUnitEq(strEq);
+            if (res.final === true) {
+                strFinalEq = strEq;
+            } else if (res.key !== undefined && res.value !== undefined) {
+                variables[res.key] = res.value;
+            }
+        }
+        return this.calcFinalValue(strFinalEq, variables);
+    }
+
+    solveSingleEq(str_eq) {
+        const regNoneEq = /[^-x()\d/*+.]/gi;
+        try {
+            let mathVal = eval(str_eq
+                .replace(regNoneEq, '')
+                .replace(/x/gi, '*'));
+
+            return mathVal;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    checkUnitEq(str) {
+        if (str.includes('?')) {
+            return { final: true };
+        } else {
+            if (!str.includes('=')) { return { final: false, error: 'no equal sign' }; }
+            const strArray1 = str.split('=');
+            try {
+                const operator = strArray1[0].match(/[*+x]/gi)[0];
+                const operands = strArray1[0].split(operator);
+
+                if (operator == '+') {
+                    return { final: false, key: operands[0], value: Number(strArray1[1]) / 2 };
+                } else if (operator.match(/[*x]/gi)) {
+                    return { final: false, key: operands[0], value: Math.sqrt(strArray1[1]) };
+                }
+            } catch (e) {
+                return { final: false, error: e.message };
+            }
+        }
+        return { final: false, error: 'defaut' };
+    }
+
+    calcFinalValue(str, variables) {
+        // console.log('[calcFinalValue]', str, variables);
+        for (let key in variables) {
+            str = this.replaceAll(str, key, variables[key]);
+        }
+        return this.solveSingleEq(str);
+    }
+
+    replaceAll(str, search, value) {
+        while (str.includes(search)) {
+            str = str.replace(search, value);
+        }
+        return str;
+    }
+}
 
 docReady(function () {
     // startMode1();
