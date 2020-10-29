@@ -43,7 +43,7 @@ const RST_PATTERNS = {
 const RSTEXTRA_PATTERNS = {
     checkbox: new RegExp("(order)?.*?terms|(?:agree|consent).*?(checkbox)?", "i"),
     checkout: new RegExp("continue.*?shipping|continue.*?button|pay.*?|donat.*?|complete.*?order|continue.*?payment", "i"),
-    terms: new RegExp("agree.*?terms|agree.*?privacy", "i")
+    terms: new RegExp("agree.*?terms|agree.*?privacy|order.*terms", "i")
 };
 
 class AutoFillElement {
@@ -207,6 +207,9 @@ class AutoFillElement {
     updateElementValue(val, key = '') {
         if (!!val) {
             const marker = this.element.getAttribute(RST_MARKER);
+            if (val.toLowerCase() === (this.element.value || "").toLowerCase()) {
+                return true;
+            }
 
             if (this.element.tagName !== undefined && this.element.tagName.toLowerCase() == 'select') {
                 // if (key == 'state')  console.log(val, this.element);//this.element
@@ -280,16 +283,19 @@ class AutoFillElement {
         // console.log(labels);
         // const regx = new RegExp('')
         const regMath = /math(\s)*[(]+.*[)]+/gi;
+        let autofilled = false;
         for (let label of labels) {
             if (label.match(regMath)) {
                 const regRemove = /math|(\s)+|[()]+/gi;
                 const equation = label.replace(regRemove, '');
                 const solver = new EqSolver(equation);
                 const answer = solver.getAnswer();
-                this.updateElementValue(answer.toString());
+                if (this.updateElementValue(answer.toString())) {
+                    autofilled = true;
+                }
             }
         }
-        return false;
+        return autofilled;
     }
 }
 
@@ -393,9 +399,10 @@ docReady(function () {
 
 function startMode1() {
     // console.log('[Hey Restock INtel]');
+    console.log('[Mode] 1');
     setTimeout(function () {
         document.addEventListener('scroll', function () {
-            // console.log('scrolled', operateCount);
+            console.log('scrolled', operateCount);
             setTimeout(function () {
                 try {
                     customClickAttempts = 0;
@@ -407,7 +414,7 @@ function startMode1() {
                         }
                     });
                 } catch (e) {
-                    console.error(e);
+                    // console.error(e);
                 }
             }, 10);
         });
@@ -415,7 +422,7 @@ function startMode1() {
             operateCount++;
             if (operateCount > 50) {
                 clearInterval(intervalInstance);
-                operateCount = 0;
+                // operateCount = 0;
                 return;
             }
             document.dispatchEvent(new CustomEvent('scroll'));
@@ -481,7 +488,7 @@ function startInfiniteMode() {
 }
 
 function startWorkflowBatch(data) {
-    console.log('[startWorkflowBatch]', data);
+    // console.log('[startWorkflowBatch]', data);
     // scan element, custom, 
     // custom click, autocheckout
     if (!data || !data.activation) {
@@ -491,6 +498,23 @@ function startWorkflowBatch(data) {
     if (!!data && !!data.settings && data.settings.autoFill !== undefined && data.settings.autoFill === true) {
         scanElements(data);  //!
     }
+
+    // start custom-autofill by selector
+    if (storage.customs && storage.customs.length) {
+        for (let custom of storage.customs) {
+            if (custom.type === 'keyword') continue;
+            // console.log('[selector custom]', custom);
+            try {
+                const element = document.querySelectorAll(custom.keyword)[0]; //console.log('[selector element]', element);
+                if (element.tagName.toLowerCase() === 'select') {
+                    autofillSelect(element, custom.value);
+                } else {
+                    autofill(element, custom.value);
+                }
+            }catch (e) {}
+        }
+    }
+
     AgreeTerms();
     // setTimeout(function () {
     // custom clicks
@@ -503,22 +527,7 @@ function startWorkflowBatch(data) {
         processCheckout();
     }
     // }, 500);
-
-    // start custom-autofill by selector
-    if (storage.customs && storage.customs.length) {
-        for (let custom of storage.customs) {
-            if (custom.type === 'keyword') continue;
-            console.log('[selector custom]', custom);
-            try {
-                const element = document.querySelectorAll(custom.keyword)[0]; console.log('[selector element]', element);
-                if (element.tagName.toLowerCase() === 'select') {
-                    autofillSelect(element, custom.value);
-                } else {
-                    autofill(element, custom.value);
-                }
-            }catch (e) {}
-        }
-    }
+    console.log('[Hi]');
 }
 
 function processCustomClicks(autoclicks) {
@@ -528,15 +537,26 @@ function processCustomClicks(autoclicks) {
         if (window.location.href.includes(ac.domain)) {
             // console.log(ac);
             ac.clicks.forEach(function (click) {
-                for (let button of document.querySelectorAll('button')) {
-                    searchButtonAndClick(button, click);
-                }
-                for (let submit of document.querySelectorAll('input[type="submit"]')) {
-                    searchButtonAndClick(submit, click);
-                }
-                for (let submit of document.querySelectorAll('a')) {
-                    searchButtonAndClick(submit, click);
-                }
+                if (click.type === 'keyword') {
+                    for (let button of document.querySelectorAll('button')) {
+                        searchButtonAndClick(button, click);
+                    }
+                    for (let submit of document.querySelectorAll('input[type="submit"]')) {
+                        searchButtonAndClick(submit, click);
+                    }
+                    for (let submit of document.querySelectorAll('a')) {
+                        searchButtonAndClick(submit, click);
+                    }
+                } else if (click.type === 'selector') {
+                    try {
+                        const element = document.querySelectorAll(click.keyword)[0];
+                        const elementMarker = element.getAttribute(RST_MARKER) || "";
+                        if (element.getAttribute(RST_MARKER) !== RST_MARKER_END) {
+                            element.click();
+                            element.setAttribute(RST_MARKER, RST_MARKER_START);
+                        }
+                    } catch (e) {}
+                } else {}
             });
         }
     });
@@ -748,9 +768,19 @@ function AgreeTerms() {
             label.setAttribute(RST_MARKER, RST_MARKER_END);
         }
     }
+    let checkboxes = document.querySelectorAll(`input[type="checkbox"]`);
+    for (let checkbox of checkboxes) {
+        const id = checkbox.id;
+        const name = checkbox.name;
+
+        if (RSTEXTRA_PATTERNS.terms.test(id) || RSTEXTRA_PATTERNS.terms.test(name)) {
+            if (!checkbox.checked) checkbox.click();
+        }
+    }
 }
 
 function autofill(element, val) {
+    persistentAutofill2(element, val); return;
     let evt = document.createEvent("HTMLEvents");
     evt.initEvent("change", true, false);
     element.focus();
@@ -762,10 +792,41 @@ function autofill(element, val) {
 function autofillSelect(select, val) {
     for (let i = 0; i < select.options.length; i++) {
         if (select.options[i].text.toLowerCase() == val.toLowerCase() || select.options[i].value.toLowerCase() == val.toLowerCase()) {
-            console.log("Found!");
             select.selectedIndex = i;
             return true;
         }
     }
     return false;
+}
+
+// @checked
+async function persistentAutofill2(element, val) {
+    if (element != null) {
+        element.click();
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", true, false);
+        element.focus();
+        element.value = val;
+        element.dispatchEvent(evt);
+        element.blur();
+        var evt = new Event("input", { bubbles: true, cancelable: true });
+        element.dispatchEvent(evt);
+    } else {
+        var interval = setInterval(function () {
+
+            if (element != null) {
+                element.click();
+                var evt = document.createEvent("HTMLEvents");
+                evt.initEvent("change", true, false);
+                element.focus();
+                element.value = val;
+                element.dispatchEvent(evt);
+                element.blur();
+                var evt = new Event("input", { bubbles: true, cancelable: true });
+                element.dispatchEvent(evt);
+                clearInterval(interval);
+            }
+
+        }, 10);
+    }
 }

@@ -172,7 +172,7 @@ button.save {
 }
 
 #domain-container .one-domain .domain-wrapper{
-    width: 50%;
+    width: 40%;
     padding: 3px;
     padding-right: 5px;
     box-sizing: border-box;
@@ -180,7 +180,7 @@ button.save {
 }
 
 #domain-container .one-domain .click-array {
-    width: 50%;
+    width: 60%;
     padding: 3px;
     padding-left: 5px;
     box-sizing: border-box;
@@ -192,6 +192,8 @@ button.save {
 }
 
 #domain-container .one-domain .form-control { height: 36px; }
+
+#domain-container .one-domain select.form-control { margin-right: 5px; }
 
 #domain-container .one-domain .click-icon {
     width: 25px;

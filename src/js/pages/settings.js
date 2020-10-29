@@ -137,6 +137,11 @@ docReady(function () {
     $('#domain-container').on('click', '.one-click .click-icon.plus', function() {
         let template = `
         <div class="one-click">
+            <select class="form-control">
+                <option>Keyword type...</option>
+                <option value="keyword">Keyword</option>
+                <option value="selector">Selector</option>
+            </select>
             <input class="form-control" placeholder="Click"/>
             <img class="click-icon plus" src="../images/plus.png" />
             <img class="click-icon trash" src="../images/trash.png" />
@@ -172,9 +177,10 @@ function loadData() {
                 fillActivationSection(result.data.activation);
             }
             if (result.data.customs) {
-                result.data.customs.forEach(function (custom) {
-                    addCustomItem(custom.keyword, custom.value, custom.type);
-                })
+                updateCustomKeywords(result.data.customs);
+                // result.data.customs.forEach(function (custom) {
+                //     addCustomItem(custom.keyword, custom.value, custom.type);
+                // })
             }
             if (result.data.autoclicks) {
                 updateAutoClickSection(result.data.autoclicks);
@@ -406,7 +412,7 @@ function saveCustomKeywords() {
                 updateCustomKeywords(customs);
             })
         }
-    })
+    });
 }
 
 function updateCustomKeywords(customs) {
@@ -491,6 +497,11 @@ function addDomainClick() {
         </div>
         <div class="click-array">
             <div class="one-click">
+                <select class="form-control">
+                    <option>Keyword type...</option>
+                    <option value="keyword">Keyword</option>
+                    <option value="selector">Selector</option>
+                </select>
                 <input class="form-control" placeholder="Click"/>
                 <img class="click-icon plus" src="../images/plus.png" />
                 <img class="click-icon trash" src="../images/trash.png" />
@@ -508,9 +519,10 @@ function saveCustomClick() {
         let domain_name = $(element).find('.domain-wrapper input').val();
         let clicks = [];
         let clickElements = $(element).find('.one-click').each(function(j, click) {
-            let click_label = $(click).find('input').val();
-            if (!!click_label) {
-                clicks.push(click_label);
+            let keyword = $(click).find('input').val();
+            let type = $(click).find('select').val();
+            if (!!keyword) {
+                clicks.push({type, keyword});
             }
         })
         if (!!domain_name && clicks.length > 0) {
@@ -554,7 +566,12 @@ function updateAutoClickSection(domains) {
             domain.clicks.forEach(function(click) {
                 clickElements += `
                 <div class="one-click">
-                    <input class="form-control" placeholder="Click" value="${click}"/>
+                    <select class="form-control">
+                        <option>Keyword type...</option>
+                        <option value="keyword" ${click.type === 'keyword' ? 'selected': ''}>Keyword</option>
+                        <option value="selector" ${click.type === 'selector' ? 'selected': ''}>Selector</option>
+                    </select>
+                    <input class="form-control" placeholder="Click" value="${click.keyword}"/>
                     <img class="click-icon plus" src="../images/plus.png" />
                     <img class="click-icon trash" src="../images/trash.png" />
                 </div>
