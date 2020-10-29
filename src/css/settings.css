@@ -11,13 +11,21 @@
 .toggle-box label { margin-bottom: 0; margin-right: 10px; }
 
 .page-container { 
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 1280px !important;
     display: flex;
     flex-wrap: wrap;
+    margin: auto;
 }
 
-.container {
-    width: 33%;
+#profile_setting {
+    width: 400px;
+    box-sizing: border-box;
+    padding: 15px;
+}
+
+#custom-sections {
+    width: calc(100% - 400px);
     box-sizing: border-box;
     padding: 15px;
 }
@@ -31,14 +39,22 @@
 }
 
 @media (max-width: 1024px) {
+    #profile_setting {
+        width: 100%;
+    }
+    #custom-sections{
+        width: 100%;
+    }
     .container {
         width: 100%;
         margin: 0 auto 2rem auto;        
     }
     .container .inner-wrapper {
-        max-width: 400px;
+        max-width: 600px;
         margin: auto;
     }
+
+    
 }
 
 .section-wrapper {
@@ -99,9 +115,12 @@ button.save {
 
 #custom_keywords .custom-item:last-child { margin-bottom: 0; }
 
-#custom_keywords .custom-item input:first-child { margin-right: 5px; }
+#custom_keywords .custom-item input,
+#custom_keywords .custom-item select { margin-right: 5px; }
 
-#custom_keywords .custom-item input:last-child { margin-left: 5px; margin-right: 5px; }
+/* #custom_keywords .custom-item input:first-child { margin-right: 5px; } */
+
+/* #custom_keywords .custom-item input:last-child { margin-left: 5px; margin-right: 5px; } */
 
 #custom_keywords .custom-item button { margin-left: 5px; border: none; border-radius: 5px; padding: 0px 13px; font-size: 20px; display: block; background-color: #111727; color: white; }
 

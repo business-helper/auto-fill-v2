@@ -93,6 +93,7 @@ class AutoFillElement {
         if (this.info.customs !== undefined && typeof this.info.customs == 'object' && this.info.customs.length !== undefined && this.info.customs.length > 0) {
             for (let str of this.getComparableStrings()) {
                 for (let custom of this.info.customs) {
+                    if (custom.type === 'selector') continue;
                     if (custom.keyword == '(calculator)' && custom.value == '(calculator)' && !!str.replace(/[^-x()\d/*+.]/g, '')) {
                         const regX = /[^-x()\d/*+.]/g;
                         try {
@@ -458,7 +459,7 @@ function startInfiniteMode() {
     console.log('[infinite mode]');
     setTimeout(function () {
         document.addEventListener('scroll', function () {
-            // console.log('scrolled', operateCount);
+            console.log('scrolled', operateCount);
             setTimeout(function () {
                 try {
                     customClickAttempts = 0;
@@ -480,7 +481,7 @@ function startInfiniteMode() {
 }
 
 function startWorkflowBatch(data) {
-    // console.log('[startWorkflowBatch]', data);
+    console.log('[startWorkflowBatch]', data);
     // scan element, custom, 
     // custom click, autocheckout
     if (!data || !data.activation) {
@@ -502,6 +503,22 @@ function startWorkflowBatch(data) {
         processCheckout();
     }
     // }, 500);
+
+    // start custom-autofill by selector
+    if (storage.customs && storage.customs.length) {
+        for (let custom of storage.customs) {
+            if (custom.type === 'keyword') continue;
+            console.log('[selector custom]', custom);
+            try {
+                const element = document.querySelectorAll(custom.keyword)[0]; console.log('[selector element]', element);
+                if (element.tagName.toLowerCase() === 'select') {
+                    autofillSelect(element, custom.value);
+                } else {
+                    autofill(element, custom.value);
+                }
+            }catch (e) {}
+        }
+    }
 }
 
 function processCustomClicks(autoclicks) {
@@ -731,4 +748,24 @@ function AgreeTerms() {
             label.setAttribute(RST_MARKER, RST_MARKER_END);
         }
     }
+}
+
+function autofill(element, val) {
+    let evt = document.createEvent("HTMLEvents");
+    evt.initEvent("change", true, false);
+    element.focus();
+    element.value = val;
+    element.dispatchEvent(evt);
+    element.blur();
+}
+
+function autofillSelect(select, val) {
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].text.toLowerCase() == val.toLowerCase() || select.options[i].value.toLowerCase() == val.toLowerCase()) {
+            console.log("Found!");
+            select.selectedIndex = i;
+            return true;
+        }
+    }
+    return false;
 }
