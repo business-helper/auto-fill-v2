@@ -129,9 +129,11 @@ docReady(function () {
     $('#domain-container').on('click', '.domain-wrapper .click-icon.plus', function() {
         addDomainClick();
     });
+    
     $('#domain-container').on('click', '.domain-wrapper .click-icon.trash', function() {
         $(this).closest('.one-domain').remove();
     });
+    
     $('#domain-container').on('click', '.one-click .click-icon.plus', function() {
         let template = `
         <div class="one-click">
@@ -141,12 +143,15 @@ docReady(function () {
         </div>`;
         $(this).closest('.click-array').append(template);
     });
+    
     $('#domain-container').on('click', '.one-click .click-icon.trash', function() {
         $(this).closest('.one-click').remove();
     });
+    
     $('#save-custom-clicks').on('click', function() {
         saveCustomClick();
     });
+    
     $('#add-custom-click').on('click', function() {
         addDomainClick();
     });
@@ -344,10 +349,8 @@ function tabSelected(elem) {
 }
 
 function fillActivationSection(activation) {
-    document.getElementById('actv_key').value = activation.key
-    // document.getElementById('actv_hwid').value = activation.activation.hwid;
-    // document.getElementById('actv_device').value = activation.activation.device_name;
-    document.getElementById('actv_token').value = activation.activation_token;
+    // document.getElementById('actv_key').value = !!activation.key ? activation.key : '';
+    // document.getElementById('actv_token').value = !!activation.activation_token ? activation.activation : '';
 }
 
 function addCustomItem(keyword = '', value = '') {
@@ -421,6 +424,15 @@ function setToggleSection(options) {
         backgroundColor: "#1E2435",
         handleActiveColor: $('#toggle-auto-fill').data('color')
     });
+    $('#toggle-infinite-loop').RestockToggle({
+        on: !!options.infiniteLoop,
+        onChange: function() {
+            updateSettings('infiniteLoop', $('#toggle-infinite-loop').RestockToggle('status'));
+        },
+        backgroundColor: "#1E2435",
+        handleActiveColor: $('#toggle-infinite-loop').data('color'),
+    });
+
 }
 
 function saveProfileImport({ profiles, profile }) {

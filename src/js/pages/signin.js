@@ -147,6 +147,7 @@ function triggerDiscordAuth() {//return;
                         }
                     })
                         .then(res => {
+                            console.log('[guilds]', res.data);
                             const guilds = res.data;
                             for (let guild of guilds) {
                                 if (guild.id === APP_SETTINGS.DISCORD_SERVER_ID) {

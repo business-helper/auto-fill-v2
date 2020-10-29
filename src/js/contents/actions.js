@@ -380,7 +380,12 @@ docReady(function () {
             storage = result.data;
             dataLoaded = true;
             // startWorkflowBatch(result.data);
-            startMode1();
+            let settings = result.data.settings;
+            if (settings.infiniteLoop !== undefined && settings.infiniteLoop === true) {
+                startInfiniteMode();
+            } else {
+                startMode1();
+            }            
         }
     });
 })
@@ -395,6 +400,7 @@ function startMode1() {
                     customClickAttempts = 0;
                     chrome.extension.sendMessage({ type: 'requestData' }, function (result) {
                         if (result.data) {
+                            // console.log(result.data);
                             storage = result.data;
                             startWorkflowBatch(result.data);
                         }
@@ -406,7 +412,7 @@ function startMode1() {
         });
         intervalInstance = setInterval(() => {
             operateCount++;
-            if (operateCount > 20) {
+            if (operateCount > 50) {
                 clearInterval(intervalInstance);
                 operateCount = 0;
                 return;
@@ -446,6 +452,31 @@ function startMode3() {
             // startMode3();
         }
     })
+}
+
+function startInfiniteMode() {
+    console.log('[infinite mode]');
+    setTimeout(function () {
+        document.addEventListener('scroll', function () {
+            // console.log('scrolled', operateCount);
+            setTimeout(function () {
+                try {
+                    customClickAttempts = 0;
+                    chrome.extension.sendMessage({ type: 'requestData' }, function (result) {
+                        if (result.data) {
+
+                            storage = result.data;
+                            startWorkflowBatch(result.data);
+                        }
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 10);
+        });
+        document.dispatchEvent(new CustomEvent('scroll'));
+        // document.dispatchEvent(new CustomEvent('scroll'));
+    }, storage.settings.delay || 200);
 }
 
 function startWorkflowBatch(data) {

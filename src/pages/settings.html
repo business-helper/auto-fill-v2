@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Autofill</title>
+    <title>TRVPchrvme</title>
     <meta name='viewport' content='initial-scale=1, width=device-width' />
     <link rel='stylesheet' href='../plugins/RestockToggle/toggle.css'>
     <link rel="stylesheet" href="../css/common.css" />
@@ -22,7 +22,7 @@
 
     <div class="page-container">
         <!-- Profile  Content -->
-        <form class="container" id="profile_setting">
+        <form class="" id="profile_setting">
             <div class="inner-wrapper">
                 <div id="im-ex-container">
                     <div class="float-right">
@@ -43,7 +43,7 @@
                 </div>
                 <div class="form-group">
                     <select class="form-control" id="profile_names">
-                        <option disabled>No rofiles</option>
+                        <option disabled>No profiles</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -105,42 +105,49 @@
                 </div>
             </div>
         </form>
+        <div class="custom-sections">
         <!-- Custom Keywords Contents -->
-        <div class="container tab-pane" id="custom_keywords">
+        <div class="tab-pane" id="custom_keywords">
             <div class="inner-wrapper">
                 <p class="section-title">Custom Autofill</p>
-                <div id="custom-container">
-                </div>
+                <div id="custom-container"></div>
                 <div class="flex">
                     <button class="w-half form-control" id="add-custom">Add</button>
                     <button class="w-half form-control save" id="save-customs">Save</button>
                 </div>
             </div>
+
+
             <div class="inner-wrapper" style="margin-top: 20px;">
-                <div class="form-group auth-item">
+                <p class="section-title">Configuration</p>
+                <div class="toggle-box">
+                    <label>Infinite Loop</label>
+                    <div id="toggle-infinite-loop" data-color="#00E6F3"></div>
+                </div>
+                <!-- <div class="form-group auth-item">
                     <label>Activation Token</label>
                     <input class="form-control" name="actv_token" id="actv_token" placeholder="Activation Token" readonly/>
                 </div>
                 <div class="form-group auth-item">
                     <label>License Key</label>
                     <input class="form-control" name="actv_key" id="actv_key" placeholder="License Key" readonly />
-                </div>
+                </div> -->
             </div>
         </div>
-        <!-- Configuration Content -->
-        <div class="container" id="configuration">
+        <!-- Custom AutoClick -->
+        <div class="" id="configuration">
             <div class="inner-wrapper">
                 <p class="section-title">Custom Autoclick</p>
                 <div id="domain-container">
                     <div class="one-domain">
                         <div class="domain-wrapper">
-                            <input class="form-control" placeholder="Domain"/>
+                            <input class="form-control" placeholder="Domain" />
                             <img class="click-icon plus" src="../images/plus.png" />
                             <img class="click-icon trash" src="../images/trash.png" />
                         </div>
                         <div class="click-array">
                             <div class="one-click">
-                                <input class="form-control" placeholder="Click"/>
+                                <input class="form-control" placeholder="Click" />
                                 <img class="click-icon plus" src="../images/plus.png" />
                                 <img class="click-icon trash" src="../images/trash.png" />
                             </div>
@@ -155,14 +162,17 @@
             <div class="inner-wrapper" style="margin-top: 20px;">
                 <div class="form-group auth-item">
                     <label>Custom Delay(ms)</label>
-                    <input class="form-control" name="custom_delay" id="custom_delay" placeholder="200ms" type="number" />
+                    <input class="form-control" name="custom_delay" id="custom_delay" placeholder="200ms"
+                        type="number" />
                 </div>
                 <div class="flex">
                     <button class="w-half form-control save" id="save-custom-delay">Save</button>
                 </div>
             </div>
         </div>
+        </div>
     </div>
+
     <div class="modal" id="validate-modal">
         <p class="modal-header">Title</p>
         <p class="modal-body">customs saved successfully!</p>
