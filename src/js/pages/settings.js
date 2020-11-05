@@ -141,6 +141,7 @@ docReady(function () {
                 <option>Keyword type...</option>
                 <option value="keyword">Keyword</option>
                 <option value="selector">Selector</option>
+                <option value="refresh">Refresh Delay(ms)</option>
             </select>
             <input class="form-control" placeholder="Click"/>
             <img class="click-icon plus" src="../images/plus.png" />
@@ -287,21 +288,22 @@ function fillProfilesSelect(data) {
  * @description fill the profile form with the given data
  */
 function fillProfileForm(profile) {
-    document.getElementById('profile-name').value = profile.name;
-    document.getElementById('email').value = profile.email;
-    document.getElementById('first-name').value = profile.first_name;
-    document.getElementById('last-name').value = profile.last_name;
-    document.getElementById('address1').value = profile.address1;
-    document.getElementById('address2').value = profile.address2;
-    document.getElementById('city').value = profile.city;
-    document.getElementById('country').value = profile.country;
-    document.getElementById('state').value = profile.state;
-    document.getElementById('zipcode').value = profile.zip_code;
-    document.getElementById('phone').value = profile.phone;
-    document.getElementById('card-number').value = profile.card_number;
-    document.getElementById('month').value = profile.card_exp_mm;
-    document.getElementById('year').value = profile.card_exp_y4;
-    document.getElementById('cvv').value = profile.card_cvv;
+    if (!profile) return;
+    document.getElementById('profile-name').value = profile.name || "";
+    document.getElementById('email').value = profile.email || "";
+    document.getElementById('first-name').value = profile.first_name || "";
+    document.getElementById('last-name').value = profile.last_name || "";
+    document.getElementById('address1').value = profile.address1 || "";
+    document.getElementById('address2').value = profile.address2 || "";
+    document.getElementById('city').value = profile.city || "";
+    document.getElementById('country').value = profile.country || "";
+    document.getElementById('state').value = profile.state || "";
+    document.getElementById('zipcode').value = profile.zip_code || "";
+    document.getElementById('phone').value = profile.phone || "";
+    document.getElementById('card-number').value = profile.card_number || "";
+    document.getElementById('month').value = profile.card_exp_mm || "";
+    document.getElementById('year').value = profile.card_exp_y4 || "";
+    document.getElementById('cvv').value = profile.card_cvv || "";
 }
 
 // filter profile with new rule
@@ -501,8 +503,9 @@ function addDomainClick() {
                     <option>Keyword type...</option>
                     <option value="keyword">Keyword</option>
                     <option value="selector">Selector</option>
+                    <option value="refresh">Refresh Delay(ms)</option>
                 </select>
-                <input class="form-control" placeholder="Click"/>
+                <input class="form-control" placeholder="Value"/>
                 <img class="click-icon plus" src="../images/plus.png" />
                 <img class="click-icon trash" src="../images/trash.png" />
             </div>
@@ -570,6 +573,7 @@ function updateAutoClickSection(domains) {
                         <option>Keyword type...</option>
                         <option value="keyword" ${click.type === 'keyword' ? 'selected': ''}>Keyword</option>
                         <option value="selector" ${click.type === 'selector' ? 'selected': ''}>Selector</option>
+                        <option value="refresh" ${click.type === 'refresh' ? 'selected': ''}>Refresh Delay(ms)</option>
                     </select>
                     <input class="form-control" placeholder="Click" value="${click.keyword}"/>
                     <img class="click-icon plus" src="../images/plus.png" />

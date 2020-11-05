@@ -389,9 +389,9 @@ docReady(function () {
             // startWorkflowBatch(result.data);
             let settings = result.data.settings;
             if (settings.infiniteLoop !== undefined && settings.infiniteLoop === true) {
-                startInfiniteMode();
-            } else {
                 startMode1();
+            } else {
+                startInfiniteMode();
             }            
         }
     });
@@ -527,25 +527,24 @@ function startWorkflowBatch(data) {
         processCheckout();
     }
     // }, 500);
-    console.log('[Hi]');
 }
 
-function processCustomClicks(autoclicks) {
+async function processCustomClicks(autoclicks) {
     // if (customClickAttempts > 10) return;
     customClickAttempts++;
-    autoclicks.forEach(function (ac) {
+    autoclicks.forEach(async function (ac) {
         if (window.location.href.includes(ac.domain)) {
             // console.log(ac);
-            ac.clicks.forEach(function (click) {
+            ac.clicks.forEach(async function (click) {
                 if (click.type === 'keyword') {
                     for (let button of document.querySelectorAll('button')) {
-                        searchButtonAndClick(button, click);
+                        searchButtonAndClick(button, click.keyword);
                     }
                     for (let submit of document.querySelectorAll('input[type="submit"]')) {
-                        searchButtonAndClick(submit, click);
+                        searchButtonAndClick(submit, click.keyword);
                     }
                     for (let submit of document.querySelectorAll('a')) {
-                        searchButtonAndClick(submit, click);
+                        searchButtonAndClick(submit, click.keyword);
                     }
                 } else if (click.type === 'selector') {
                     try {
@@ -556,6 +555,9 @@ function processCustomClicks(autoclicks) {
                             element.setAttribute(RST_MARKER, RST_MARKER_START);
                         }
                     } catch (e) {}
+                } else if (click.type === 'refresh') {
+                    console.log('[sleep]', click.keyword);
+                    await sleep(Number(click.keyword) || 100);
                 } else {}
             });
         }
@@ -608,7 +610,7 @@ function searchButtonAndClick(elem, text) {
     const strText = elem.innerText || '';
     const strValue = elem.value || '';
 
-    console.log(strText, strValue || 'val', text, validElement(elem));
+    // console.log(strText, strValue || 'val', text, validElement(elem));
     // if (!validElement(elem)) return;
     // check background-color and color are different
     color = window.getComputedStyle(elem).getPropertyValue("color");
@@ -662,8 +664,11 @@ function attemptCheckout(elem) {
 function clickAutoPayButton(elem) {
     if (!validElement(elem)) {
         console.log('[checkout] return - invalid');
+        setTimeout(function() {
+            clickAutoPayButton(elem);
+        }, 100);
         return;
-    }
+    } 
     if (elem.getAttribute(RST_MARKER) === RST_MARKER_END) return;
 
     if (elem.form && !elem.form.checkValidity()) return false;
@@ -724,7 +729,7 @@ function isParentFormTransparent(elem) {
     return false;
 }
 
-function sleep(time) {
+async function sleep(time) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve(true)

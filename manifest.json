@@ -35,12 +35,6 @@
       "all_frames": true,
       "matches": ["\u003Call_urls>"],
       "run_at": "document_start",
-      "js": ["src/js/common/common.js"]
-    },
-    {
-      "all_frames": true,
-      "matches": ["\u003Call_urls>"],
-      "run_at": "document_start",
       "js": [
         "src/js/lib/axios.min.js",
         "src/js/lib/aes.js",
@@ -49,7 +43,12 @@
       ]
     },
     {
-      "css": [],
+      "all_frames": true,
+      "matches": ["\u003Call_urls>"],
+      "run_at": "document_start",
+      "js": ["src/js/common/common.js"]
+    },
+    {
       "js": [
         "src/js/contents/actions.js"
       ],
