@@ -33,3 +33,24 @@
     }
 }
  ```
+
+
+ - Profile Object
+ ```json
+ {
+   "address1": "",
+   "address2": "",
+   "card_cvv": "",
+   "card_exp_mm": "",
+   "card_number": "",
+   "city": "",
+   "country": "",
+   "email": "",
+   "first_name": "",
+   "last_name": "",
+   "name": "",
+   "phone": "",
+   "state": "",
+   "zip_code": ""
+ }
+ ```

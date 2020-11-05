@@ -117,12 +117,22 @@ docReady(function () {
     // save custom delay
     document.getElementById('save-custom-delay').addEventListener('click', function() {
         let delay = 200;
+        
         let customDelay = $('#custom_delay').val();
         if (!!customDelay) {
             delay = customDelay;
         }
+        let supreme_delay = $('#supreme_key_delay').val() || 20;
+
         updateSettings('delay', delay, () => {
-            showAlertModal('Data saved successfully');
+            // showAlertModal('Data saved successfully');
+            console.log('[delay saved]');
+        });
+        updateSettings('delays', {
+          custom: delay,
+          supreme_key: supreme_delay,
+        }, () => {
+          showAlertModal('Data saved successfully!');
         });
     });
 
@@ -187,10 +197,15 @@ function loadData() {
                 updateAutoClickSection(result.data.autoclicks);
             }
             let delay = 200;
-            if (result.data && result.data.settings && result.data.settings.delay && result.data.settings.delay) {
+            let supreme_delay = 20;
+            if (result.data && result.data.settings && result.data.settings.delay) {
                 delay = result.data.settings.delay;
             }
+            if (result.data && result.data.settings && result.data.settings.delays) {
+              supreme_delay = result.data.settings.delays.supreme_key;
+            }
             $('#custom_delay').val(delay);
+            $('#supreme_key_delay').val(supreme_delay);
         } else {
             fillProfilesSelect({profiles: []});
         }

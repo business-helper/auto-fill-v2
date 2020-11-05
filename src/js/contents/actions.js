@@ -663,7 +663,7 @@ function attemptCheckout(elem) {
 
 function clickAutoPayButton(elem) {
     if (!validElement(elem)) {
-        console.log('[checkout] return - invalid');
+        // console.log('[checkout] return - invalid');
         setTimeout(function() {
             clickAutoPayButton(elem);
         }, 100);
