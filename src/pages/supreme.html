@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <title>TRVPchrvme</title>
+  <meta name='viewport' content='initial-scale=1, width=device-width' />
+  <link rel="stylesheet" href="../plugins/toastr/toastr.min.css" />
+  <link rel='stylesheet' href='../plugins/RestockToggle/toggle.css' />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/modal.css" />
+  <link rel="stylesheet" href="../css/supreme.css" />
+</head>
+
+<body>
+  <div class="header" id="header">
+    <!-- Settings -->
+    <img src="../images/logo_wide.png" alt="Restock Intel Logo" />
+  </div>
+
+  <div class="tabs container">
+    <a class="tab" href="settings.html">Dashboard</a>
+    <a class="tab active" href="#">Supreme</a>
+  </div>
+
+  <div class="page-container">
+    <div class="container w-full mb-3">
+      <div class="" style="margin-bottom: 2rem;">
+        <div class="inner-wrapper">
+          <p class="section-title">Product Property</p>
+          <div id="products">
+            <form id="product-form">
+              <div class="form-group">
+                <label>Category</label>
+                <select class="form-control mr-1" id="product-category" required>
+                  <option value="">Select Category...</option>
+                  <option value="jackets">jackets</option>
+                  <option value="shirts">shirts</option>
+                  <option value="tops/sweaters">tops/sweaters</option>
+                  <option value="sweatshirts">sweatshirts</option>
+                  <option value="pants">pants</option>
+                  <option value="shorts">shorts</option>
+                  <option value="hats">hats</option>
+                  <option value="bags">bags</option>
+                  <option value="accessories">accessories</option>
+                  <option value="shoes">shoes</option>
+                  <option value="skate">skate</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Product Keyword</label>
+                <input class="form-control" id="product-keyword" placeholder="e.g. +shirt-soldout" required/>
+                <div style="margin-top: 10px;">
+                  <input type="checkbox" id="auto-refresh" /><label class="inline font-12" for="auto-refresh">Refresh
+                    until find matches</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Product Style</label>
+                <input class="form-control" id="product-style" placeholder="e.g. +dark+black-green" required />
+                <div class="" style="margin-top: 10px;">
+                  <input type="checkbox" id="random-style" /><label class="inline font-12" for="random-style">Select
+                    random if nothing matches</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Product Size</label>
+                <input class="form-control" id="product-size" placeholder="e.g. +large+129-small" required />
+                <div class="" style="margin-top: 10px;">
+                  <input type="checkbox" id="random-size" /><label class="inline font-12" for="random-size">Select
+                    random if nothing matches</label>
+                </div>
+              </div>
+              <div class="flex mt-3" style="justify-content: center;">
+                <button type="submit" class="w-half form-control save" id="save-proudcts">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/lib/aes.js"></script>
+  <script src="../js/lib/jquery.js"></script>
+  <script src="../plugins/toastr/toastr.min.js"></script>
+  <script src="../plugins/RestockToggle/toggle.js"></script>
+  <script src="../js/common/common.js"></script>
+  <script src="../js/pages/supreme.js"></script>
+</body>
+
+</html>

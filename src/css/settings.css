@@ -1,10 +1,9 @@
 :root {}
 
-#header { background-color: var(--bg-body); padding-bottom: 0; }
 
-#header img {
-    height: 70px;
-}
+
+
+
 
 .toggle-box { display: flex; align-items: center; margin-left: 15px; margin-right: 15px; }
 
@@ -12,7 +11,7 @@
 
 .page-container { 
     width: 100%;
-    max-width: 1280px !important;
+    max-width: 1360px !important;
     display: flex;
     flex-wrap: wrap;
     margin: auto;
@@ -122,11 +121,11 @@ button.save {
 
 /* #custom_keywords .custom-item input:last-child { margin-left: 5px; margin-right: 5px; } */
 
-#custom_keywords .custom-item button { margin-left: 5px; border: none; border-radius: 5px; padding: 0px 13px; font-size: 20px; display: block; background-color: #111727; color: white; }
+#custom_keywords .custom-item button, .btn-remove { margin-left: 5px; border: none; border-radius: 5px; padding: 0px 13px; font-size: 20px; display: block; background-color: #111727; color: white; }
 
-#custom_keywords .custom-item:hover button { display: block; }
+#custom_keywords .custom-item:hover button, .btn-remove { display: block; }
 
-#custom_keywords .custom-item button:hover { background-color: #181f33; color: #ddd; }
+#custom_keywords .custom-item button:hover, .btn-remove:hover { background-color: #181f33; color: #ddd; }
 
 .form-group.auth-item label{ text-align: center; font-size: 14px; color: #978B8B; font-weight: bold; }
 

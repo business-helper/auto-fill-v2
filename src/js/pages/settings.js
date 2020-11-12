@@ -174,9 +174,11 @@ docReady(function () {
 })
 
 function loadData() {
+  
     $('input').each(function(i, input) {
         $(input).val('');
     })
+    
     chrome.storage.local.get(["data"], function (result) {
         console.log('[loadData]', result);
         if (result && result.data) {
