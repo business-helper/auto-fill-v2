@@ -82,7 +82,7 @@ async function selectProduct() {
     const styleMatch = checkMatchWithKeywords(prodStyle, _product.style);
 
     if (nameMatch && styleMatch) {
-      productElem.querySelector('.name-link').click();
+      productElem.querySelector('.name-link').click(); return;
     }
 
     products.push({
@@ -97,12 +97,13 @@ async function selectProduct() {
   }
   
   // check random match
-  const nameMatches = products.filter(product => product.match.name);
+  const nameMatches = products.filter(product => product.match.name); 
   if (nameMatches.length > 0 && _product.random_style) {
     console.log('[Found random match]', nameMatches[0].name, nameMatches[0].element);
     const randIdx = myRand(0, nameMatches.length);
-    nameMatches[randIdx].element.querySelector('.name-link').click();
+    nameMatches[randIdx].element.querySelector('.name-link').click(); return;
   } else {
+    console.log('[will refresh]'); // return; // dev only
     const [category] = productCategories.filter(cate => cate.name === _product.category);
     setTimeout(function() {
       window.location.href = `https://www.supremenewyork.com/shop/${category.token}`;

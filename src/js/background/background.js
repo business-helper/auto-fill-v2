@@ -24,11 +24,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-
-  // since only one tab should be active and in the current window at once
-  // the return variable should only have one entry
   let activeTab = tabs[0]; console.log('[Active tab]', activeTab.id);
-
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
@@ -47,7 +43,7 @@ chrome.webRequest.onCompleted.addListener(
     const ptn_supremeATC = new RegExp("supremenewyork.com/shop/[a-z0-9]+/add", "i");
     if (ptn_supremeATC.test(url) && _tabs['SUPREME_ATC']) {
 
-      chrome.tabs.sendMessage(_tabs['SUPREME_ATC'], { action: "SUPREME_ATC" });
+      chrome.tabs.sendMessage(details.tabId, { action: "SUPREME_ATC" });
     }
   },
   { urls: ["<all_urls>"] }
