@@ -39,6 +39,7 @@
      "random_style": true | false,
      "size": "",
      "random_size": true | false,
+     "key_delay": 0
    }
 }
 ```
